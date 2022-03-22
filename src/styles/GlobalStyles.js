@@ -5,7 +5,10 @@ const GlobalStyles = createGlobalStyle`
     :root{
     --font-title: 'Passion One', cursive;
     --font-subtitle: 'Oswald', sans-serif;
-    --font-texts: 'Lato', sans-serif;
+    --font-family: 'Lato', sans-serif;
+    
+    --font-color: #FFFFFF;
+    --placeholder-color: #9F9F9F; 
 	--background-color: #333333;
     --navbar-color: #151515;
     --button-color: #1877F2;
