@@ -98,38 +98,42 @@ export default function Timeline() {
                                 <p>{post.description}</p>
                             </article>
 
-                            <LinkPreview>
-                                <LinkData>
-                                    <h1>{post.url.title}</h1>
+                            <a href={post.url.link} target="_blank">
+                                <LinkPreview>
+                                    <LinkData>
+                                        <h1>{post.url.title}</h1>
 
-                                    <p>{post.url.description}</p>
+                                        <p>{post.url.description}</p>
 
-                                    <h2>{post.url.link}</h2>
-                                </LinkData>
+                                        <h2>{post.url.link}</h2>
+                                    </LinkData>
 
-                                <LinkImage>
-                                    <img src={post.url.image} alt={post.url.title}/>
-                                </LinkImage>
-                            </LinkPreview>
+                                    <LinkImage>
+                                        <img src={post.url.image} alt={post.url.title}/>
+                                    </LinkImage>
+                                </LinkPreview>
+                            </a>
                         </RightPostContainer>
                     </PostBox>
                 )}
             </Feed>
         </Container>
     )
+
 }
 
 const Container = styled.main`
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
     background-color: #333333;
     display: flex;
     justify-content: center;
+    box-sizing: border-box;
 
     * {
-    box-sizing: border-box;
+        box-sizing: border-box;
     }
 `;
 
