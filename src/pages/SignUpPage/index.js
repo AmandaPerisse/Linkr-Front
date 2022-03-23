@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from './styles';
-
+import { motion } from "framer-motion"
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 function SignUpPage() {
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,20 +18,64 @@ function SignUpPage() {
     function handleSignUp(e) {
         e.preventDefault();
 
+        setIsLoading(true);
+        setInputLoading("disabled");
+        if (email === "" || password == "" || username === "" || url === "") {
+            alert("Preencha todos os campos!");
+            setIsLoading(false);
+            setInputLoading("");
+        }
+        else {
+            const promise = axios.post('http://localhost:5000/users', {
+                username: username,
+                email: email,
+                password: password,
+                pictureUrl: url
+            });
+
+
+
+            promise.then(response => {
+                alert("Usuário cadastrado. Faça Login agora")
+                navigate('/')
+
+            })
+            promise.catch(error => {
+                if (error.response.status === 409) {
+                    alert("Email já cadastrado! Tente novamente")
+                }
+                else {
+                    alert("Erro no sistema! Tente novamente.")
+                }
+                console.log(error.response.status)
+                setIsLoading(false);
+                setInputLoading("");
+            })
+        }
     }
+
+
 
     return (
         <Container>
             <LogoWrapper>
-                <LogoCard>
+                <motion.LogoCard initial={{ x: -10 }} animate={{ x: 0 }} transition={{
+                    stiffness: 260,
+                    damping: 20,
+                    duration: 0.8
+                }}>
                     <Title>linkr</Title>
                     <Subtitle>save, share and discover</Subtitle>
                     <Subtitle>the best links on the web</Subtitle>
-                </LogoCard>
+                </motion.LogoCard>
             </LogoWrapper>
             <SignUpWrapper>
-                <SignUpCard>
-                    <form onSubmit={handleSignUp} >
+                <SignUpCard >
+                    <motion.form onSubmit={handleSignUp} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{
+                        stiffness: 260,
+                        damping: 20,
+                        duration: 1
+                    }}>
                         <Input
                             type="email"
                             placeholder="e-mail"
@@ -57,15 +104,10 @@ function SignUpPage() {
                             value={url}
                             disabled={inputLoading}
                         />
-                        <Button>
-                            Sign Up
-                        </Button>
+                        <Button>{isLoading ? ("loading...") : ("Sign Up")} </Button>
 
                         <LinkStyled to="/" > Switch back to log in </LinkStyled>
-                    </form>
-
-
-
+                    </motion.form>
                 </SignUpCard>
 
             </SignUpWrapper>

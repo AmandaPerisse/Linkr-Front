@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../SignUpPage/styles';
+import { motion } from "framer-motion"
+
 
 // import { Container } from './styles';
 
@@ -16,16 +18,25 @@ function LoginPage() {
     }
     return (
         <Container>
-            <LogoWrapper>
-                <LogoCard>
+            <LogoWrapper >
+                <motion.LogoCard initial={{ x: -10, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{
+                    stiffness: 260,
+                    damping: 20,
+                    duration: 1
+                }}>
                     <Title>linkr</Title>
                     <Subtitle>save, share and discover</Subtitle>
                     <Subtitle>the best links on the web</Subtitle>
-                </LogoCard>
+                </motion.LogoCard>
             </LogoWrapper>
             <SignUpWrapper>
-                <SignUpCard>
-                    <form onSubmit={handleLogin} >
+                <SignUpCard >
+                    <motion.form onSubmit={handleLogin} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                        transition={{
+                            stiffness: 260,
+                            damping: 20,
+                            duration: 1
+                        }}>
                         <Input
                             type="email"
                             placeholder="e-mail"
@@ -45,12 +56,12 @@ function LoginPage() {
                         </Button>
 
                         <LinkStyled to="/sign-up" > First time?Create an account! </LinkStyled>
-                    </form>
+                    </motion.form>
                 </SignUpCard>
 
             </SignUpWrapper>
 
-        </Container>
+        </Container >
     )
 }
 

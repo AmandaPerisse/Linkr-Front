@@ -159,16 +159,6 @@ const LinkStyled = styled(Link)`
     text-align: center;
     text-decoration-line: underline;
 
-
-
-/* identical to box height */
-
-text-decoration-line: underline;
-
-color: #FFFFFF;
-
-
-
 `;
 
 export {
