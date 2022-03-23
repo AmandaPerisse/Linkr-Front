@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
 import { FaRegHeart } from 'react-icons/fa';
+import "../../styles/reset.css";
 
 export default function Timeline() {
 
@@ -13,8 +14,8 @@ export default function Timeline() {
             },
             "url": {
                 "link": "https://reactjs.org",
-                "title": "React – A JavaScript library for building user interfaces",
-                "description": "A JavaScript library for building user interfaces",
+                "title": "Como aplicar o Material UI em um projeto React",
+                "description": "Hey! I have moved this tutorial to my personal blog. Same content, new location. Sorry about making you click through to another page.",
                 "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
             },
             "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
@@ -32,88 +33,112 @@ export default function Timeline() {
                 "image": "https://cdn.peekalink.io/public/images/57900b1c-d279-47f7-af5f-aae4f3ca08d0/52fed94c-ecf2-4e00-809b-ca681d2431d2.jpg"
             },
             "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
+            "likesQty": 25,
+        },
+        {
+            "user": {
+                "name": "Juju",
+                "picture": "https://i.pinimg.com/originals/f8/f3/01/f8f301698392ee89abd583fe98c83a54.jpg"
+            },
+            "url": {
+                "link": "https://reactjs.org",
+                "title": "Como aplicar o React",
+                "description": "Hey! I  blog.  , new .     click through to another page.",
+                "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
+            },
+            "description": "Muito maneiro     UI  ,   ! #react #material",
             "likesQty": 13,
         },
     ];
 
-    console.log(timeline);
-
     return (
         <Container>
-            <Title to={"/"}> timeline </Title>
+            <Feed>
+                <Title to={"/"}> timeline </Title>
 
-            <ShareBox>
-                <form>
-                    <PostTitle>
-                        What are you going to share today?
-                    </PostTitle>
+                <ShareBox>
+                    <form>
+                        <LinkShared>
+                            What are you going to share today?
+                        </LinkShared>
 
-                    <LinkInput
-                        placeholder="http:/..."
-                        type="url"
-                    />
+                        <LinkInput
+                            placeholder="http:/..."
+                            type="url"
+                        />
 
-                    <DescriptionInput
-                        placeholder="Awesome article about #javascript"
-                    />
+                        <DescriptionInput
+                            placeholder="Awesome article about #javascript"
+                        />
 
-                    <PublishButton>
-                        Publish
-                    </PublishButton>
-                </form>
-            </ShareBox>
-            
-            <PostBox>
-                <LeftPostContainer>
-                    <img src={timeline[0].user.picture} alt={timeline[0].user.name} />
-                    
-                    <FaRegHeart
-                        size={17}
-                        color={"#FFFFFF"}
-                    />
+                        <PublishButton>
+                            Publish
+                        </PublishButton>
+                    </form>
+                </ShareBox>
+                
+                {timeline.map( post => 
+                    <PostBox>
+                        <LeftPostContainer>
+                            <img src={post.user.picture} alt={post.user.name} />
+                            
+                            <FaRegHeart
+                                size={17}
+                                color={"#FFFFFF"}
+                            />
 
-                    <p>{`${timeline[0].likesQty} likes`}</p>
-                </LeftPostContainer>
+                            <p>{`${post.likesQty} likes`}</p>
+                        </LeftPostContainer>
 
 
-                <RightPostContainer>
-                    <h1>{timeline[0].user.name}</h1>
+                        <RightPostContainer>
+                            <h1>{post.user.name}</h1>
 
-                    <article>
-                        <p>{timeline[0].description}</p>
-                    </article>
+                            <article>
+                                <p>{post.description}</p>
+                            </article>
 
-                    <LinkPreview>
-                        <div>
+                            <LinkPreview>
+                                <LinkData>
+                                    <h1>{post.url.title}</h1>
 
-                        </div>
+                                    <p>{post.url.description}</p>
 
-                        <img src={timeline[0].url.image} alt={timeline[0].url.title}/>
-                    </LinkPreview>
-                </RightPostContainer>
-            </PostBox>
+                                    <h2>{post.url.link}</h2>
+                                </LinkData>
+
+                                <LinkImage>
+                                    <img src={post.url.image} alt={post.url.title}/>
+                                </LinkImage>
+                            </LinkPreview>
+                        </RightPostContainer>
+                    </PostBox>
+                )}
+            </Feed>
         </Container>
     )
-
 }
 
 const Container = styled.main`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  padding-top: 72px;
-  box-sizing: border-box;
-  background-color: #333333;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    background-color: #333333;
+    display: flex;
+    justify-content: center;
 
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-
-  *{
+    * {
     box-sizing: border-box;
-  }
+    }
+`;
+
+const Feed = styled.div`
+    padding: 72px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 `;
 
 const Title = styled(Link)`
@@ -121,16 +146,17 @@ const Title = styled(Link)`
     color: #FFF;
     font-family: Oswald;
     font-weight: 700;
-    text-decoration: none;
-    margin: 19px 0 0 17px;
+    margin-top: 19px;
+    align-self: flex-start;
 
     &:hover {
-    text-decoration: underline;
-  }
+        text-decoration: underline;
+    }
 `;
 
 const ShareBox = styled.div`
     width: 100%;
+    max-width: 615px;
     height: 164px;
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -142,17 +168,17 @@ const ShareBox = styled.div`
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        gap: 5px;
     }
 `;
 
-const PostTitle = styled.div`
+const LinkShared = styled.div`
     font-family: Lato;
     color: #707070;
     font-size: 17px;
     font-style: normal;
     font-weight: 300;
     text-align: center;
-    margin: 0;
 
     white-space: nowrap;
     overflow: hidden;
@@ -232,7 +258,9 @@ const PublishButton = styled.button`
 
 const PostBox = styled.div`
     width: 100%;
-    height: 232px;
+    max-width: 615px;
+    height: auto;
+    max-height: 340px;
     background-color: #171717;
     padding: 15px;
 
@@ -256,6 +284,7 @@ const LeftPostContainer = styled.div`
         background-color: #FFFFFF;
         object-fit: cover;
         margin-bottom: 17px;
+        cursor: pointer;
     }
 
     p {
@@ -264,32 +293,36 @@ const LeftPostContainer = styled.div`
         color: #FFFFFF;
         margin: 12px 0;
     }
+
+    svg {
+        cursor: pointer;
+    }
 `;
 
 const RightPostContainer = styled.div`
-    height: 100%;
+    height: auto;
     width: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 10px;
 
     h1 {
-        font-family: Lato;
         font-weight: 400;
         font-size: 17px;
         text-align: left;
         color: #FFFFFF;
-        margin: 0;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        cursor: pointer;
     }
 
     article {
         width: 100%;
-        height: 55px;
+        height: auto;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -304,28 +337,79 @@ const RightPostContainer = styled.div`
             line-height: 18px;
             text-align: left;
             color: #B7B7B7;
-            margin: 0;
         }
     }
 `;
 
 const LinkPreview = styled.div`
     width: 100%;
-    height: 115px;
+    height: auto;
     border: 1px solid #4D4D4D;
     border-radius: 11px;
     overflow: hidden;
     display: flex;
+    align-items: stretch;
+    cursor: pointer;
+`;
 
-    div {
-        height: 100%;
+const LinkData = styled.div`
+    width: 68%;
+    padding: 10px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 5px;
+
+    h1 {
         width: 100%;
+        overflow: hidden;
+        white-space: normal;
+        text-overflow: ellipsis;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 13px;
+        text-align: left;
+        color: #CECECE; 
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;       
     }
 
+    p {
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 11px;
+        text-align: left;
+        color: #9B9595;
+        white-space: normal;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+    }
+
+    h2 {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 9px;
+        font-weight: 400;
+        line-height: 11px;
+        text-align: left;
+        color: #CECECE;
+    }
+`;
+
+const LinkImage = styled.div`
+    width: 32%;
+    overflow: hidden;
+    background-color: #FFFFFF;
+    display: flex;
+
     img {
-        height: 100%;
-        width: 95px;
-        background-color: #FFFFFF;
+        width: 100%;
         object-fit: cover;
     }
 `;
