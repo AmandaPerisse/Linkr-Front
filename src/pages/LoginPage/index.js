@@ -8,7 +8,6 @@ import axios from 'axios';
 function LoginPage() {
     const navigate = useNavigate();
     const { userInfos, setUserInfos } = useContext(UserContext);
-    console.log(userInfos);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -8,7 +8,6 @@ import GlobalStyles from './styles/GlobalStyles';
 
 function App() {
   const [userInfos, setUserInfos] = useState('');
-    console.log(userInfos);
 
   return (
 
