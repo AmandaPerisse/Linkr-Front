@@ -89,7 +89,8 @@ export default function TimelinePage() {
         
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
-                newDescriptionArray.push(<strong>{descriptionArray[i]} </strong>);
+                const hashtag = descriptionArray[i].replace("#", "");
+                newDescriptionArray.push(<a href = {`/hashtag/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -101,100 +102,107 @@ export default function TimelinePage() {
     return (
         <Container isLoading={isLoading}>
             <Header />
-    
-            <Feed>
-                <Title to={"/timeline"}> timeline </Title>
+            <Main>
+                <Feed>
+                    <Title to={"/timeline"}> timeline </Title>
 
-                <ShareBox>
-                    <form onSubmit={handleSubmit}> 
-                        <SharedBoxQuestion>
-                            What are you going to share today?
-                        </SharedBoxQuestion>
+                    <ShareBox>
+                        <form onSubmit={handleSubmit}> 
+                            <SharedBoxQuestion>
+                                What are you going to share today?
+                            </SharedBoxQuestion>
 
-                        <LinkInput
-                            placeholder="http:/..."
-                            type="url"
-                            onChange={(e) => setUrlToPost(e.target.value)}
-                            value={urlToPost}
-                            required
-                        />
+                            <LinkInput
+                                placeholder="http:/..."
+                                type="url"
+                                onChange={(e) => setUrlToPost(e.target.value)}
+                                value={urlToPost}
+                                required
+                            />
 
-                        <DescriptionInput
-                            placeholder="Awesome article about #javascript"
-                            onChange={(e) => setCommentToPost(e.target.value)}
-                            value={commentToPost}
-                        />
+                            <DescriptionInput
+                                placeholder="Awesome article about #javascript"
+                                onChange={(e) => setCommentToPost(e.target.value)}
+                                value={commentToPost}
+                            />
 
-                        <PublishButton isLoading={isLoading}>
-                            {isLoading ? 'Publishing...' : 'Publish'}
-                        </PublishButton>
-                    </form>
-                </ShareBox>
-                
-                {timeline.map( post => 
-                    <PostBox>
-                        <LeftPostContainer>
-                            <img src={post.user.picture} alt={post.user.name} />
+                            <PublishButton isLoading={isLoading}>
+                                {isLoading ? 'Publishing...' : 'Publish'}
+                            </PublishButton>
+                        </form>
+                    </ShareBox>
+                    
+                    {timeline.map( post => 
+                        <PostBox>
+                            <LeftPostContainer>
+                                <img src={post.user.picture} alt={post.user.name} />
+                                
+                                {post.likedByUser ? 
+                                    <FaHeart
+                                        size={17}
+                                        color={"#AC0000"}
+                                        onMouseEnter={e => {
+                                            setHoveredPost(timeline.indexOf(post));
+                                        }}
+                                        onMouseLeave={e => {
+                                            setHoveredPost(null)
+                                        }}
+                                    />
+                                :
+                                    <FaRegHeart
+                                        size={17}
+                                        color={"#FFFFFF"}
+                                        onMouseEnter={e => {
+                                            setHoveredPost(timeline.indexOf(post));
+                                        }}
+                                        onMouseLeave={e => {
+                                            setHoveredPost(null)
+                                        }}
+                                    />
+                                }
+
+                                <p>{`${post.likesQty} likes`}</p>
                             
-                            {post.likedByUser ? 
-                                <FaHeart
-                                    size={17}
-                                    color={"#AC0000"}
-                                    onMouseEnter={e => {
-                                        setHoveredPost(timeline.indexOf(post));
-                                    }}
-                                    onMouseLeave={e => {
-                                        setHoveredPost(null)
-                                    }}
-                                />
-                            :
-                                <FaRegHeart
-                                    size={17}
-                                    color={"#FFFFFF"}
-                                    onMouseEnter={e => {
-                                        setHoveredPost(timeline.indexOf(post));
-                                    }}
-                                    onMouseLeave={e => {
-                                        setHoveredPost(null)
-                                    }}
-                                />
-                            }
+                                <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+                                    {post.likedBy}
 
-                            <p>{`${post.likesQty} likes`}</p>
-                        
-                            <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
-                                {post.likedBy}
+                                    <div/>
+                                </LikedBy>
+                            </LeftPostContainer>
+                            
+                            <RightPostContainer>
+                                <h1>{post.user.name}</h1>
 
-                                <div/>
-                            </LikedBy>
-                        </LeftPostContainer>
-                        
-                        <RightPostContainer>
-                            <h1>{post.user.name}</h1>
+                                <article>
+                                    <p>{highlightHashtags(post.description)}</p>
+                                </article>
 
-                            <article>
-                                <p>{highlightHashtags(post.description)}</p>
-                            </article>
+                                <a href={post.url.link} target="_blank" rel="noreferrer">
+                                    <LinkPreview>
+                                        <LinkData>
+                                            <h1>{post.url.title}</h1>
 
-                            <a href={post.url.link} target="_blank" rel="noreferrer">
-                                <LinkPreview>
-                                    <LinkData>
-                                        <h1>{post.url.title}</h1>
+                                            <p>{post.url.description}</p>
 
-                                        <p>{post.url.description}</p>
+                                            <h2>{post.url.link}</h2>
+                                        </LinkData>
 
-                                        <h2>{post.url.link}</h2>
-                                    </LinkData>
-
-                                    <LinkImage>
-                                        <img src={post.url.image} alt={post.url.title}/>
-                                    </LinkImage>
-                                </LinkPreview>
-                            </a>
-                        </RightPostContainer>
-                    </PostBox>
-                )}
-            </Feed>
+                                        <LinkImage>
+                                            <img src={post.url.image} alt={post.url.title}/>
+                                        </LinkImage>
+                                    </LinkPreview>
+                                </a>
+                            </RightPostContainer>
+                        </PostBox>
+                    )}
+                </Feed>
+                <div>
+                    <TrendingSubTitle>
+                        <SubTitle>Trending</SubTitle>
+                    </TrendingSubTitle>
+                    <TrendingHashtags></TrendingHashtags>
+                </div>
+            </Main>
         </Container>
     )
 }
@@ -219,13 +227,45 @@ const Container = styled.main`
         `)
     };
 `;
+const Main = styled.div`
+    display: flex;
+    justify-contents: space-between; 
+    margin: 72px 0;
+    gap: 20px;
+`;
+const TrendingSubTitle = styled.div`
+    background-color: #171717; 
+    width: 300px;
+    margin-top: 66px;
+    border-radius: 16px 16px 0px 0px;
+    padding: 0px 15px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-contents: center;
+`;
+const SubTitle = styled.h2`
+    font-size: 27px;
+    color: #FFF;
+    font-family: Oswald;
+`;
+const TrendingHashtags = styled.div`
+    background-color: #171717; 
+    width: 300px;
+    margin-top: 1px;
+    border-radius: 0px 0px 16px 16px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-contents: center;
+`;
 
 const Feed = styled.div`
-    padding: 72px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    width: 615px;
 `;
 
 const Title = styled(Link)`
@@ -242,8 +282,8 @@ const Title = styled(Link)`
 `;
 
 const ShareBox = styled.div`
+    border-radius: 16px;
     width: 100%;
-    max-width: 615px;
     height: 164px;
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -352,8 +392,8 @@ const PublishButton = styled.button`
 `;
 
 const PostBox = styled.div`
+    border-radius: 16px;
     width: 100%;
-    max-width: 615px;
     height: auto;
     max-height: 340px;
     background-color: #171717;
