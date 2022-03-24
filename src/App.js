@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -15,7 +15,8 @@ function App() {
       <BrowserRouter>
         <GlobalStyles />
         <Routes>
-          <Route path="/" element={<LoginPage />}></Route>
+          <Route path="/" element={<TimelinePage />}></Route> {/*Remover essa linha e descomentar a debaixo*/}
+          {/* <Route path="/" element={<LoginPage />}></Route> */}
           <Route path="/sign-up" element={<SignUpPage />}></Route>
           <Route path="/timeline" element={<TimelinePage />}></Route>
         </Routes>
