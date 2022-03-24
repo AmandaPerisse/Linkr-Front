@@ -1,14 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
-import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
+import Header from "../../components/HeaderComponents/index.js";
 
 import "../../styles/reset.css";
 
 export default function TimelinePage() {
     const { userInfos } = useContext(UserContext);
-    console.log(userInfos)
+    console.log(userInfos);
 
     const [urlToPost, setUrlToPost] = useState("")
     const [commentToPost, setCommentToPost] = useState("")
@@ -99,8 +100,10 @@ export default function TimelinePage() {
 
     return (
         <Container isLoading={isLoading}>
+            <Header />
+    
             <Feed>
-                <Title to={"/"}> timeline </Title>
+                <Title to={"/timeline"}> timeline </Title>
 
                 <ShareBox>
                     <form onSubmit={handleSubmit}> 
