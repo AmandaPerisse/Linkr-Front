@@ -1,10 +1,15 @@
-import { useState, useEffect } from "react";
-import styled from 'styled-components';
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import styled from 'styled-components';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import UserContext from '../../Providers/UserContext.js';
+
 import "../../styles/reset.css";
 
-export default function Timeline() {
+export default function TimelinePage() {
+    const { userInfos } = useContext(UserContext);
+    console.log(userInfos)
+
     const [urlToPost, setUrlToPost] = useState("")
     const [commentToPost, setCommentToPost] = useState("")
     const [isLoading, setIsLoading] = useState(false);
