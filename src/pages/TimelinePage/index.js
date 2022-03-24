@@ -8,8 +8,8 @@ import Header from "../../components/Header/index.js";
 import "../../styles/reset.css";
 
 export default function TimelinePage() {
-    const { userInfos } = useContext(UserContext);
-    console.log(userInfos);
+    const { userInfos, token } = useContext(UserContext);
+    console.log(token, userInfos);
 
     const [urlToPost, setUrlToPost] = useState("")
     const [commentToPost, setCommentToPost] = useState("")
@@ -78,15 +78,15 @@ export default function TimelinePage() {
             setIsLoading(false);
 
         } catch (error) {
-            alert("Houve um erro ao publicar seu link");   
-            setIsLoading(false);        
+            alert("Houve um erro ao publicar seu link");
+            setIsLoading(false);
         }
     }
 
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
         const newDescriptionArray = [];
-        
+
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 newDescriptionArray.push(<strong>{descriptionArray[i]} </strong>);
@@ -101,12 +101,12 @@ export default function TimelinePage() {
     return (
         <Container isLoading={isLoading}>
             <Header />
-    
+
             <Feed>
                 <Title to={"/timeline"}> timeline </Title>
 
                 <ShareBox>
-                    <form onSubmit={handleSubmit}> 
+                    <form onSubmit={handleSubmit}>
                         <SharedBoxQuestion>
                             What are you going to share today?
                         </SharedBoxQuestion>
@@ -130,13 +130,13 @@ export default function TimelinePage() {
                         </PublishButton>
                     </form>
                 </ShareBox>
-                
-                {timeline.map( post => 
+
+                {timeline.map(post =>
                     <PostBox>
                         <LeftPostContainer>
                             <img src={post.user.picture} alt={post.user.name} />
-                            
-                            {post.likedByUser ? 
+
+                            {post.likedByUser ?
                                 <FaHeart
                                     size={17}
                                     color={"#AC0000"}
@@ -147,7 +147,7 @@ export default function TimelinePage() {
                                         setHoveredPost(null)
                                     }}
                                 />
-                            :
+                                :
                                 <FaRegHeart
                                     size={17}
                                     color={"#FFFFFF"}
@@ -161,14 +161,14 @@ export default function TimelinePage() {
                             }
 
                             <p>{`${post.likesQty} likes`}</p>
-                        
-                            <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+
+                            <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
                                 {post.likedBy}
 
-                                <div/>
+                                <div />
                             </LikedBy>
                         </LeftPostContainer>
-                        
+
                         <RightPostContainer>
                             <h1>{post.user.name}</h1>
 
@@ -187,7 +187,7 @@ export default function TimelinePage() {
                                     </LinkData>
 
                                     <LinkImage>
-                                        <img src={post.url.image} alt={post.url.title}/>
+                                        <img src={post.url.image} alt={post.url.title} />
                                     </LinkImage>
                                 </LinkPreview>
                             </a>
@@ -214,7 +214,7 @@ const Container = styled.main`
     }
 
     ${({ isLoading }) =>
-        (isLoading && `
+    (isLoading && `
             pointer-events: none !important;
         `)
     };
@@ -344,7 +344,7 @@ const PublishButton = styled.button`
     cursor: pointer;
 
     ${({ isLoading }) =>
-        (isLoading && `
+    (isLoading && `
             opacity: 0.7 !important;
             pointer-events: none !important;
         `)
