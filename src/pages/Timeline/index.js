@@ -5,6 +5,9 @@ import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import "../../styles/reset.css";
 
 export default function Timeline() {
+    const [urlToPost, setUrlToPost] = useState("")
+    const [commentToPost, setCommentToPost] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
     const [hoveredPost, setHoveredPost] = useState(null);
 
     const timeline = [
@@ -35,7 +38,7 @@ export default function Timeline() {
                 "description": "GitHub is where over 73 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...",
                 "image": "https://cdn.peekalink.io/public/images/57900b1c-d279-47f7-af5f-aae4f3ca08d0/52fed94c-ecf2-4e00-809b-ca681d2431d2.jpg"
             },
-            "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
+            "description": "Muito mane#iro esse tutorial de Material UI com React, deem uma olhada! #react #material",
             "likesQty": 25,
             "likedByUser": false,
             "likedBy": "João, Maria e outras 23 pessoas"
@@ -58,12 +61,28 @@ export default function Timeline() {
         },
     ];
 
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setIsLoading(true);
+        console.log('postou');
+
+        try {
+            //await post(urlToPost, commentToPost);
+            //atualizar useEffect
+            setIsLoading(false);
+
+        } catch (error) {
+            alert("Houve um erro ao publicar seu link");   
+            setIsLoading(false);        
+        }
+    }
+
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
         const newDescriptionArray = [];
         
         for (let i = 0; i < descriptionArray.length; i++) {
-            if (descriptionArray[i].includes("#")) {
+            if (descriptionArray[i][0] === "#") {
                 newDescriptionArray.push(<strong>{descriptionArray[i]} </strong>);
                 continue;
             }
@@ -74,12 +93,12 @@ export default function Timeline() {
     }
 
     return (
-        <Container>
+        <Container isLoading={isLoading}>
             <Feed>
                 <Title to={"/"}> timeline </Title>
 
                 <ShareBox>
-                    <form>
+                    <form onSubmit={handleSubmit}> 
                         <LinkShared>
                             What are you going to share today?
                         </LinkShared>
@@ -87,14 +106,19 @@ export default function Timeline() {
                         <LinkInput
                             placeholder="http:/..."
                             type="url"
+                            onChange={(e) => setUrlToPost(e.target.value)}
+                            value={urlToPost}
+                            required
                         />
 
                         <DescriptionInput
                             placeholder="Awesome article about #javascript"
+                            onChange={(e) => setCommentToPost(e.target.value)}
+                            value={commentToPost}
                         />
 
-                        <PublishButton>
-                            Publish
+                        <PublishButton isLoading={isLoading}>
+                            {isLoading ? 'Publishing...' : 'Publish'}
                         </PublishButton>
                     </form>
                 </ShareBox>
@@ -144,7 +168,7 @@ export default function Timeline() {
                                 <p>{highlightHashtags(post.description)}</p>
                             </article>
 
-                            <a href={post.url.link} target="_blank">
+                            <a href={post.url.link} target="_blank" rel="noreferrer">
                                 <LinkPreview>
                                     <LinkData>
                                         <h1>{post.url.title}</h1>
@@ -181,6 +205,12 @@ const Container = styled.main`
     * {
         box-sizing: border-box;
     }
+
+    ${({ isLoading }) =>
+        (isLoading && `
+            pointer-events: none !important;
+        `)
+    };
 `;
 
 const Feed = styled.div`
@@ -304,6 +334,13 @@ const PublishButton = styled.button`
     overflow: hidden;
 
     cursor: pointer;
+
+    ${({ isLoading }) =>
+        (isLoading && `
+            opacity: 0.7 !important;
+            pointer-events: none !important;
+        `)
+    };
 `;
 
 const PostBox = styled.div`
