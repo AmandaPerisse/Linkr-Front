@@ -7,8 +7,8 @@ import axios from 'axios';
 
 function LoginPage() {
     const navigate = useNavigate();
-    const { setUserInfos } = useContext(UserContext);
-
+    const { userInfos, setUserInfos } = useContext(UserContext);
+    console.log(userInfos);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -49,8 +49,8 @@ function LoginPage() {
                 setInputLoading("");
             })
         }
-
     }
+    
     return (
         <Container>
             <LogoWrapper >

@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
 
 export default function Header() {
+    const { userInfos, setUserInfos } = useContext(UserContext);
     const [showLogoutBox, setShowLogoutBox] = useState(false);
-
-    /* Quando backend estiver feito excluir userInfo*/
-    const userInfo = {
-        "name": "Vector",
-        "picture": "https://i.kym-cdn.com/entries/icons/facebook/000/023/977/cover3.jpg"
-    };
+    const navigate = useNavigate();
 
     function handleLogout() {
         console.log('logout');
+        setUserInfos(null);
+        localStorage.removeItem('auth');
+        navigate("/");   
     }
 
     return (
@@ -38,7 +38,7 @@ export default function Header() {
                     />
                 }
 
-                <img src={userInfo.picture} />
+                <img src={userInfos.user.pictureUrl} />
                 {showLogoutBox &&
                     <LogoutBox
                         onClick={e => handleLogout()}
@@ -110,4 +110,6 @@ const LogoutBox = styled.div`
     font-weight: 700;
     line-height: 18px;
     letter-spacing: 0.05em;
+
+    cursor: pointer;
 `;

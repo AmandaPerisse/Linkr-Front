@@ -9,7 +9,6 @@ import "../../styles/reset.css";
 
 export default function TimelinePage() {
     const { userInfos } = useContext(UserContext);
-    console.log(userInfos);
 
     const [urlToPost, setUrlToPost] = useState("")
     const [commentToPost, setCommentToPost] = useState("")

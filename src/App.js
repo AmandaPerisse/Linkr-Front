@@ -8,6 +8,7 @@ import GlobalStyles from './styles/GlobalStyles';
 
 function App() {
   const [userInfos, setUserInfos] = useState('');
+    console.log(userInfos);
 
   return (
 
@@ -15,8 +16,7 @@ function App() {
       <BrowserRouter>
         <GlobalStyles />
         <Routes>
-          <Route path="/" element={<TimelinePage />}></Route> {/*Remover essa linha e descomentar a debaixo*/}
-          {/* <Route path="/" element={<LoginPage />}></Route> */}
+          <Route path="/" element={<LoginPage />}></Route>
           <Route path="/sign-up" element={<SignUpPage />}></Route>
           <Route path="/timeline" element={<TimelinePage />}></Route>
         </Routes>
