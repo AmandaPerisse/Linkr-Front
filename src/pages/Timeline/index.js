@@ -1,10 +1,11 @@
-// import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styled from 'styled-components';
 import { Link } from "react-router-dom";
-import { FaRegHeart } from 'react-icons/fa';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import "../../styles/reset.css";
 
 export default function Timeline() {
+    const [hoveredPost, setHoveredPost] = useState(null);
 
     const timeline = [
         {
@@ -20,6 +21,8 @@ export default function Timeline() {
             },
             "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
             "likesQty": 13,
+            "likedByUser": true,
+            "likedBy": "Você, João, Maria e outras 11 pessoas"
         },
         {
             "user": {
@@ -34,6 +37,8 @@ export default function Timeline() {
             },
             "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
             "likesQty": 25,
+            "likedByUser": false,
+            "likedBy": "João, Maria e outras 23 pessoas"
         },
         {
             "user": {
@@ -46,10 +51,27 @@ export default function Timeline() {
                 "description": "Hey! I  blog.  , new .     click through to another page.",
                 "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
             },
-            "description": "Muito maneiro     UI  ,   ! #react #material",
+            "description": "Muito #maneiro UI, #material",
             "likesQty": 13,
+            "likedByUser": false,
+            "likedBy": "João, Maria e outras 23 pessoas"
         },
     ];
+
+    function highlightHashtags(description) {
+        const descriptionArray = description.split(' ');
+        const newDescriptionArray = [];
+        
+        for (let i = 0; i < descriptionArray.length; i++) {
+            if (descriptionArray[i].includes("#")) {
+                newDescriptionArray.push(<strong>{descriptionArray[i]} </strong>);
+                continue;
+            }
+            newDescriptionArray.push(`${descriptionArray[i]} `);
+        }
+
+        return newDescriptionArray;
+    }
 
     return (
         <Container>
@@ -82,20 +104,44 @@ export default function Timeline() {
                         <LeftPostContainer>
                             <img src={post.user.picture} alt={post.user.name} />
                             
-                            <FaRegHeart
-                                size={17}
-                                color={"#FFFFFF"}
-                            />
+                            {post.likedByUser ? 
+                                <FaHeart
+                                    size={17}
+                                    color={"#AC0000"}
+                                    onMouseEnter={e => {
+                                        setHoveredPost(timeline.indexOf(post));
+                                    }}
+                                    onMouseLeave={e => {
+                                        setHoveredPost(null)
+                                    }}
+                                />
+                            :
+                                <FaRegHeart
+                                    size={17}
+                                    color={"#FFFFFF"}
+                                    onMouseEnter={e => {
+                                        setHoveredPost(timeline.indexOf(post));
+                                    }}
+                                    onMouseLeave={e => {
+                                        setHoveredPost(null)
+                                    }}
+                                />
+                            }
 
                             <p>{`${post.likesQty} likes`}</p>
+                        
+                            <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+                                {post.likedBy}
+
+                                <div/>
+                            </LikedBy>
                         </LeftPostContainer>
-
-
+                        
                         <RightPostContainer>
                             <h1>{post.user.name}</h1>
 
                             <article>
-                                <p>{post.description}</p>
+                                <p>{highlightHashtags(post.description)}</p>
                             </article>
 
                             <a href={post.url.link} target="_blank">
@@ -280,6 +326,7 @@ const LeftPostContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 
     img {
         width: 40px;
@@ -341,6 +388,10 @@ const RightPostContainer = styled.div`
             line-height: 18px;
             text-align: left;
             color: #B7B7B7;
+        }
+
+        strong {
+            color: #FFFFFF;
         }
     }
 `;
@@ -415,5 +466,32 @@ const LinkImage = styled.div`
     img {
         width: 100%;
         object-fit: cover;
+    }
+`;
+
+const LikedBy = styled.div`
+    position: absolute;
+    top: 110px;
+    width: auto;
+    height: 25px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 3px;
+    white-space: nowrap;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: #505050;
+
+    div {
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 8px solid rgba(255, 255, 255, 0.9);
+        position: absolute;
+        bottom: 84%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 `;
