@@ -7,6 +7,7 @@ import UserContext from '../../Providers/UserContext.js';
 export default function Header() {
     const [showLogoutBox, setShowLogoutBox] = useState(false);
 
+    /* Quando backend estiver feito excluir userInfo*/
     const userInfo = {
         "name": "Vector",
         "picture": "https://i.kym-cdn.com/entries/icons/facebook/000/023/977/cover3.jpg"

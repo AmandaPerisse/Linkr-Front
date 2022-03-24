@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import styled from 'styled-components';
 import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
-import Header from "../../components/HeaderComponents/index.js";
+import Header from "../../components/Header/index.js";
 
 import "../../styles/reset.css";
 
@@ -107,9 +107,9 @@ export default function TimelinePage() {
 
                 <ShareBox>
                     <form onSubmit={handleSubmit}> 
-                        <LinkShared>
+                        <SharedBoxQuestion>
                             What are you going to share today?
-                        </LinkShared>
+                        </SharedBoxQuestion>
 
                         <LinkInput
                             placeholder="http:/..."
@@ -197,7 +197,6 @@ export default function TimelinePage() {
             </Feed>
         </Container>
     )
-
 }
 
 const Container = styled.main`
@@ -260,7 +259,8 @@ const ShareBox = styled.div`
     }
 `;
 
-const LinkShared = styled.div`
+const SharedBoxQuestion = styled.div`
+    height: 20px;
     font-family: Lato;
     color: #707070;
     font-size: 17px;
