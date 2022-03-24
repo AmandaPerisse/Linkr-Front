@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import styled from 'styled-components';
-import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
 

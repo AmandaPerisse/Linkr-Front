@@ -20,7 +20,7 @@ function LoginPage() {
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password == "") {
+        if (email === "" || password === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
