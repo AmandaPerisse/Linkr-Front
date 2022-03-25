@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
+import axios from "axios";
 
 import "../../styles/reset.css";
 
@@ -11,10 +12,11 @@ export default function TimelinePage() {
     const { userInfos } = useContext(UserContext);
     console.log(userInfos);
 
-    const [urlToPost, setUrlToPost] = useState("")
-    const [commentToPost, setCommentToPost] = useState("")
+    const [urlToPost, setUrlToPost] = useState("");
+    const [commentToPost, setCommentToPost] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [hoveredPost, setHoveredPost] = useState(null);
+    const [trendingList, setTrendingList] = useState([]);
 
     const timeline = [
         {
@@ -97,6 +99,39 @@ export default function TimelinePage() {
         }
 
         return newDescriptionArray;
+    }
+
+    useEffect(() => {
+        try{
+            const promise = axios.get('http://localhost:5000/timeline', {
+                /*headers: {
+                    "Authorization": `Bearer ${token}`
+                }*/
+            });
+            promise.then(response => {
+                if(response.data){
+                    setTrendingList(response.data);
+                }
+            });
+        }
+        catch(e){
+            alert('Falha.');
+        }
+    }, []);
+
+    function Hashtags(){
+        return (
+            trendingList.map(hashtag => {
+                const id = hashtag.id;
+                const name = hashtag.name;
+                return(
+                    <HashtagName key = {id}>
+                        <a href = {`hashtag/${name}`}># {name}</a>
+                    </HashtagName>
+                )
+                
+            })
+        )
     }
 
     return (
@@ -200,7 +235,9 @@ export default function TimelinePage() {
                     <TrendingSubTitle>
                         <SubTitle>Trending</SubTitle>
                     </TrendingSubTitle>
-                    <TrendingHashtags></TrendingHashtags>
+                    <TrendingHashtags>
+                        <Hashtags />
+                    </TrendingHashtags>
                 </div>
             </Main>
         </Container>
@@ -244,20 +281,29 @@ const TrendingSubTitle = styled.div`
     align-items: center;
     justify-contents: center;
 `;
-const SubTitle = styled.h2`
-    font-size: 27px;
-    color: #FFF;
-    font-family: Oswald;
-`;
 const TrendingHashtags = styled.div`
     background-color: #171717; 
     width: 300px;
     margin-top: 1px;
     border-radius: 0px 0px 16px 16px;
-    padding: 15px;
+    padding: 20px 15px;
     display: flex;
-    align-items: center;
     justify-contents: center;
+    flex-direction: column;
+    gap: 10px;
+`;
+const SubTitle = styled.h2`
+    font-size: 27px;
+    color: #FFF;
+    font-family: Oswald;
+`;
+const HashtagName = styled.h3`
+    font-size: 19px;
+    color: #FFF;
+    font-family: Oswald;
+    a{
+        color: white;
+    }
 `;
 
 const Feed = styled.div`
