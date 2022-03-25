@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
@@ -8,7 +8,12 @@ import axios from "axios";
 
 import "../../styles/reset.css";
 
-export default function TimelinePage() {
+export default function TimelinePage({ title, isHidden }) {
+    const { hashtag } = useParams();
+    if(!title){
+        title = `# ${hashtag}`;
+    }
+
     const { userInfos, token } = useContext(UserContext);
     console.log(token, userInfos);
 
@@ -92,7 +97,7 @@ export default function TimelinePage() {
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
-                newDescriptionArray.push(<a href = {`/hashtag/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+                newDescriptionArray.push(<a href = {`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -103,12 +108,24 @@ export default function TimelinePage() {
 
     useEffect(() => {
         try{
-            const promise = axios.get('http://localhost:5000/timeline', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
-            promise.then(response => {
+            if(hashtag){
+                const promiseTrendingPosts = axios.get(`http://localhost:5000/hashtag/${hashtag}`, {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendingPosts.then(response => {
+                    if(response.data){
+                        /*Colocar o mesmo que os posts da timeline*/
+                    }
+                });
+            }
+            const promiseTrendings = axios.get('http://localhost:5000/hashtag', {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendings.then(response => {
                 if(response.data){
                     setTrendingList(response.data);
                 }
@@ -126,7 +143,7 @@ export default function TimelinePage() {
                 const name = hashtag.name;
                 return(
                     <HashtagName key = {id}>
-                        <a href = {`hashtag/${name}`}># {name}</a>
+                        <a href = {`/hashtags/${name}`}># {name}</a>
                     </HashtagName>
                 )
                 
@@ -139,9 +156,9 @@ export default function TimelinePage() {
             <Header />
             <Main>
                 <Feed>
-                    <Title to={"/timeline"}> timeline </Title>
+                    <Title>{title}</Title>
 
-                    <ShareBox>
+                    <ShareBox isHidden = {isHidden}>
                         <form onSubmit={handleSubmit}> 
                             <SharedBoxQuestion>
                                 What are you going to share today?
@@ -279,7 +296,6 @@ const TrendingSubTitle = styled.div`
     height: 55px;
     display: flex;
     align-items: center;
-    justify-content: center;
 `;
 const TrendingHashtags = styled.div`
     background-color: #171717; 
@@ -314,17 +330,13 @@ const Feed = styled.div`
     width: 615px;
 `;
 
-const Title = styled(Link)`
+const Title = styled.h1`
     font-size: 33px;
     color: #FFF;
     font-family: Oswald;
     font-weight: 700;
     margin-top: 19px;
     align-self: flex-start;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;
 
 const ShareBox = styled.div`
@@ -334,6 +346,7 @@ const ShareBox = styled.div`
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
+    display: ${props => props.isHidden};
 
     form {
         width: 100%;
