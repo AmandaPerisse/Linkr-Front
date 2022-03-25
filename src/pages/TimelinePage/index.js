@@ -92,7 +92,7 @@ export default function TimelinePage() {
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
-                newDescriptionArray.push(<a href = {`/hashtag/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+                newDescriptionArray.push(<a href={`/hashtag/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -102,34 +102,34 @@ export default function TimelinePage() {
     }
 
     useEffect(() => {
-        try{
-            const promise = axios.get('http://localhost:5000/timeline', {
+        try {
+            const promise = axios.get('http:// https://top-linkr.herokuapp.com/timeline', {
                 /*headers: {
                     "Authorization": `Bearer ${token}`
                 }*/
             });
             promise.then(response => {
-                if(response.data){
+                if (response.data) {
                     setTrendingList(response.data);
                 }
             });
         }
-        catch(e){
+        catch (e) {
             alert('Falha.');
         }
     }, []);
 
-    function Hashtags(){
+    function Hashtags() {
         return (
             trendingList.map(hashtag => {
                 const id = hashtag.id;
                 const name = hashtag.name;
-                return(
-                    <HashtagName key = {id}>
-                        <a href = {`hashtag/${name}`}># {name}</a>
+                return (
+                    <HashtagName key={id}>
+                        <a href={`hashtag/${name}`}># {name}</a>
                     </HashtagName>
                 )
-                
+
             })
         )
     }
@@ -142,7 +142,7 @@ export default function TimelinePage() {
                     <Title to={"/timeline"}> timeline </Title>
 
                     <ShareBox>
-                        <form onSubmit={handleSubmit}> 
+                        <form onSubmit={handleSubmit}>
                             <SharedBoxQuestion>
                                 What are you going to share today?
                             </SharedBoxQuestion>
@@ -166,13 +166,13 @@ export default function TimelinePage() {
                             </PublishButton>
                         </form>
                     </ShareBox>
-                    
-                    {timeline.map( post => 
+
+                    {timeline.map(post =>
                         <PostBox>
                             <LeftPostContainer>
                                 <img src={post.user.picture} alt={post.user.name} />
-                                
-                                {post.likedByUser ? 
+
+                                {post.likedByUser ?
                                     <FaHeart
                                         size={17}
                                         color={"#AC0000"}
@@ -183,7 +183,7 @@ export default function TimelinePage() {
                                             setHoveredPost(null)
                                         }}
                                     />
-                                :
+                                    :
                                     <FaRegHeart
                                         size={17}
                                         color={"#FFFFFF"}
@@ -197,14 +197,14 @@ export default function TimelinePage() {
                                 }
 
                                 <p>{`${post.likesQty} likes`}</p>
-                            
-                                <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+
+                                <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
                                     {post.likedBy}
 
-                                    <div/>
+                                    <div />
                                 </LikedBy>
                             </LeftPostContainer>
-                            
+
                             <RightPostContainer>
                                 <h1>{post.user.name}</h1>
 
@@ -223,7 +223,7 @@ export default function TimelinePage() {
                                         </LinkData>
 
                                         <LinkImage>
-                                            <img src={post.url.image} alt={post.url.title}/>
+                                            <img src={post.url.image} alt={post.url.title} />
                                         </LinkImage>
                                     </LinkPreview>
                                 </a>
