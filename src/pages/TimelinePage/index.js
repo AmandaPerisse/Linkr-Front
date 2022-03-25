@@ -9,8 +9,8 @@ import axios from "axios";
 import "../../styles/reset.css";
 
 export default function TimelinePage() {
-    const { userInfos } = useContext(UserContext);
-    console.log(userInfos);
+    const { userInfos, token } = useContext(UserContext);
+    console.log(token, userInfos);
 
     const [urlToPost, setUrlToPost] = useState("");
     const [commentToPost, setCommentToPost] = useState("");
@@ -80,15 +80,15 @@ export default function TimelinePage() {
             setIsLoading(false);
 
         } catch (error) {
-            alert("Houve um erro ao publicar seu link");   
-            setIsLoading(false);        
+            alert("Houve um erro ao publicar seu link");
+            setIsLoading(false);
         }
     }
 
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
         const newDescriptionArray = [];
-        
+
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
@@ -259,14 +259,14 @@ const Container = styled.main`
     }
 
     ${({ isLoading }) =>
-        (isLoading && `
+    (isLoading && `
             pointer-events: none !important;
         `)
     };
 `;
 const Main = styled.div`
     display: flex;
-    justify-contents: space-between; 
+    justify-content: space-between; 
     margin: 72px 0;
     gap: 20px;
 `;
@@ -279,7 +279,7 @@ const TrendingSubTitle = styled.div`
     height: 55px;
     display: flex;
     align-items: center;
-    justify-contents: center;
+    justify-content: center;
 `;
 const TrendingHashtags = styled.div`
     background-color: #171717; 
@@ -288,7 +288,7 @@ const TrendingHashtags = styled.div`
     border-radius: 0px 0px 16px 16px;
     padding: 20px 15px;
     display: flex;
-    justify-contents: center;
+    justify-content: center;
     flex-direction: column;
     gap: 10px;
 `;
@@ -430,7 +430,7 @@ const PublishButton = styled.button`
     cursor: pointer;
 
     ${({ isLoading }) =>
-        (isLoading && `
+    (isLoading && `
             opacity: 0.7 !important;
             pointer-events: none !important;
         `)
