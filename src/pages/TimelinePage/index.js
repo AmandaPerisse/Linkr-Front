@@ -32,10 +32,7 @@ export default function TimelinePage() {
         });
     
         promise.catch((error) => {
-            alert(`STATUS: ${error.response.statusText} (${error.response.status})
-                
-                ${error.response.data}
-            `);
+            alert('An error occured while trying to fetch the posts, please refresh the page');
             setIsLoadingFeed(false);
         });
       }, [timesFeedUpdated]);
@@ -135,68 +132,71 @@ export default function TimelinePage() {
                     </>
 
                 :
-                    timeline.map( post => 
-                        <PostBox>
-                            <LeftPostContainer>
-                                <img src={post.user.pictureUrl} alt={post.user.name} />
+                    timeline.length === 0 ?
+                        <h3>There are no posts yet</h3>
+                    :
+                        timeline.map( post => 
+                            <PostBox>
+                                <LeftPostContainer>
+                                    <img src={post.user.pictureUrl} alt={post.user.name} />
+                                    
+                                    {post.likedByUser ? 
+                                        <FaHeart
+                                            size={17}
+                                            color={"#AC0000"}
+                                            onMouseEnter={e => {
+                                                setHoveredPost(timeline.indexOf(post));
+                                            }}
+                                            onMouseLeave={e => {
+                                                setHoveredPost(null)
+                                            }}
+                                        />
+                                    :
+                                        <FaRegHeart
+                                            size={17}
+                                            color={"#FFFFFF"}
+                                            onMouseEnter={e => {
+                                                setHoveredPost(timeline.indexOf(post));
+                                            }}
+                                            onMouseLeave={e => {
+                                                setHoveredPost(null)
+                                            }}
+                                        />
+                                    }
+
+                                    <p>{`${post.likesAmount} likes`}</p>
                                 
-                                {post.likedByUser ? 
-                                    <FaHeart
-                                        size={17}
-                                        color={"#AC0000"}
-                                        onMouseEnter={e => {
-                                            setHoveredPost(timeline.indexOf(post));
-                                        }}
-                                        onMouseLeave={e => {
-                                            setHoveredPost(null)
-                                        }}
-                                    />
-                                :
-                                    <FaRegHeart
-                                        size={17}
-                                        color={"#FFFFFF"}
-                                        onMouseEnter={e => {
-                                            setHoveredPost(timeline.indexOf(post));
-                                        }}
-                                        onMouseLeave={e => {
-                                            setHoveredPost(null)
-                                        }}
-                                    />
-                                }
+                                    <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+                                        {post.likedBy}
 
-                                <p>{`${post.likesAmount} likes`}</p>
-                            
-                                <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
-                                    {post.likedBy}
+                                        <div/>
+                                    </LikedBy>
+                                </LeftPostContainer>
+                                
+                                <RightPostContainer>
+                                    <h1>{post.user.name}</h1>
 
-                                    <div/>
-                                </LikedBy>
-                            </LeftPostContainer>
-                            
-                            <RightPostContainer>
-                                <h1>{post.user.name}</h1>
+                                    <article>
+                                        <p>{highlightHashtags(post.description)}</p>
+                                    </article>
 
-                                <article>
-                                    <p>{highlightHashtags(post.description)}</p>
-                                </article>
+                                    <a href={post.url.link} target="_blank" rel="noreferrer">
+                                        <LinkPreview>
+                                            <LinkData>
+                                                <h1>{post.url.title}</h1>
 
-                                <a href={post.url.link} target="_blank" rel="noreferrer">
-                                    <LinkPreview>
-                                        <LinkData>
-                                            <h1>{post.url.title}</h1>
+                                                <p>{post.url.description}</p>
 
-                                            <p>{post.url.description}</p>
+                                                <h2>{post.url.link}</h2>
+                                            </LinkData>
 
-                                            <h2>{post.url.link}</h2>
-                                        </LinkData>
-
-                                        <LinkImage>
-                                            <img src={post.url.image} alt={post.url.title}/>
-                                        </LinkImage>
-                                    </LinkPreview>
-                                </a>
-                            </RightPostContainer>
-                        </PostBox>
+                                            <LinkImage>
+                                                <img src={post.url.image} alt={post.url.title}/>
+                                            </LinkImage>
+                                        </LinkPreview>
+                                    </a>
+                                </RightPostContainer>
+                            </PostBox>
                 )}
             </Feed>
         </Container>
