@@ -13,7 +13,7 @@ async function publishPost(body, token) {
   return await axios.post(`${BASE_URL}/feed`, body, config);
 }
 
-async function getTimeline(body, token) {
+async function getTimeline(token) {
     const config = createConfig(token);
   
     return await axios.get(`${BASE_URL}/feed`, config);

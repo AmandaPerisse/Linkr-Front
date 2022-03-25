@@ -10,62 +10,32 @@ import "../../styles/reset.css";
 
 export default function TimelinePage() {
     const { userInfos } = useContext(UserContext);
+    console.log(userInfos);
 
+    const [timeline, setTimeline] = useState([]);
     const [urlToPost, setUrlToPost] = useState("")
     const [postDescription, setPostDescription] = useState("")
     const [isLoading, setIsLoading] = useState(false);
     const [hoveredPost, setHoveredPost] = useState(null);
+    const [timesFeedUpdated, setTimesFeedUpdated] = useState(0);
 
-    const timeline = [
-        {
-            "user": {
-                "name": "Juvenal Juvêncio",
-                "picture": "https://i.pinimg.com/originals/f8/f3/01/f8f301698392ee89abd583fe98c83a54.jpg"
-            },
-            "url": {
-                "link": "https://reactjs.org",
-                "title": "Como aplicar o Material UI em um projeto React",
-                "description": "Hey! I have moved this tutorial to my personal blog. Same content, new location. Sorry about making you click through to another page.",
-                "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
-            },
-            "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
-            "likesQty": 13,
-            "likedByUser": true,
-            "likedBy": "Você, João, Maria e outras 11 pessoas"
-        },
-        {
-            "user": {
-                "name": "Juvenal Juvêncio",
-                "picture": "https://i.kym-cdn.com/entries/icons/original/000/016/546/hidethepainharold.jpg"
-            },
-            "url": {
-                "link": "https://github.com/",
-                "title": "GitHub: Where the world builds software",
-                "description": "GitHub is where over 73 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...",
-                "image": "https://cdn.peekalink.io/public/images/57900b1c-d279-47f7-af5f-aae4f3ca08d0/52fed94c-ecf2-4e00-809b-ca681d2431d2.jpg"
-            },
-            "description": "Muito mane#iro esse tutorial de Material UI com React, deem uma olhada! #react #material",
-            "likesQty": 25,
-            "likedByUser": false,
-            "likedBy": "João, Maria e outras 23 pessoas"
-        },
-        {
-            "user": {
-                "name": "Juju",
-                "picture": "https://i.pinimg.com/originals/f8/f3/01/f8f301698392ee89abd583fe98c83a54.jpg"
-            },
-            "url": {
-                "link": "https://reactjs.org",
-                "title": "Como aplicar o React",
-                "description": "Hey! I  blog.  , new .     click through to another page.",
-                "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
-            },
-            "description": "Muito #maneiro UI, #material",
-            "likesQty": 13,
-            "likedByUser": false,
-            "likedBy": "João, Maria e outras 23 pessoas"
-        },
-    ];
+    useEffect(() => {
+        setIsLoading(true);
+        const promise = getTimeline(userInfos.token);
+    
+        promise.then((response) => {
+          setIsLoading(false);
+          setTimeline([...response.data]);
+        });
+    
+        promise.catch((error) => {
+          alert(`STATUS: ${error.response.statusText} (${error.response.status})
+                
+                ${error.response.data}
+                `);
+          setIsLoading(false);
+        });
+      }, [timesFeedUpdated]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -79,7 +49,7 @@ export default function TimelinePage() {
             );
 
             promise.then(response => {
-                console.log(response);
+                setTimesFeedUpdated(timesFeedUpdated + 1);
                 setIsLoading(false);
             })
 
@@ -88,8 +58,7 @@ export default function TimelinePage() {
                 console.log(error.response.status)
                 setIsLoading(false);
             })
-
-            //atualizar useEffect        
+            console.log(timesFeedUpdated);
     }
 
     function highlightHashtags(description) {
@@ -143,7 +112,7 @@ export default function TimelinePage() {
                 {timeline.map( post => 
                     <PostBox>
                         <LeftPostContainer>
-                            <img src={post.user.picture} alt={post.user.name} />
+                            <img src={post.user.pictureUrl} alt={post.user.name} />
                             
                             {post.likedByUser ? 
                                 <FaHeart
@@ -169,7 +138,7 @@ export default function TimelinePage() {
                                 />
                             }
 
-                            <p>{`${post.likesQty} likes`}</p>
+                            <p>{`${post.likesAmount} likes`}</p>
                         
                             <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
                                 {post.likedBy}
