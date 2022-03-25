@@ -9,7 +9,7 @@ function SignUpPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [userName, setUserName] = useState('');
     const [url, setUrl] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,20 +20,18 @@ function SignUpPage() {
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password === "" || username === "" || url === "") {
+        if (email === "" || password === "" || userName === "" || url === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
         }
         else {
             const promise = axios.post('http://localhost:5000/users', {
-                username: username,
+                userName: userName,
                 email: email,
                 password: password,
                 pictureUrl: url
             });
-
-
 
             promise.then(response => {
                 alert("Usuário cadastrado. Faça Login agora")
@@ -53,8 +51,6 @@ function SignUpPage() {
             })
         }
     }
-
-
 
     return (
         <Container>
@@ -93,8 +89,8 @@ function SignUpPage() {
                         <Input
                             type="username"
                             placeholder="username"
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
+                            onChange={(e) => setUserName(e.target.value)}
+                            value={userName}
                             disabled={inputLoading}
                         />
                         <Input
