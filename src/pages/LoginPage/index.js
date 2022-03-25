@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router';
@@ -7,7 +7,7 @@ import axios from 'axios';
 
 function LoginPage() {
     const navigate = useNavigate();
-    const { setUserInfos } = useContext(UserContext);
+    const { setUserInfos, token, setToken } = useContext(UserContext);
 
 
     const [email, setEmail] = useState('');
@@ -15,6 +15,13 @@ function LoginPage() {
 
     const [isLoading, setIsLoading] = useState(false);
     const [inputLoading, setInputLoading] = useState("");
+
+
+    useEffect(() => {
+        if (token) {
+            navigate('/timeline')
+        }
+    }, [])
 
     function handleLogin(e) {
         e.preventDefault();
@@ -33,7 +40,10 @@ function LoginPage() {
             });
 
             promise.then(response => {
-                setUserInfos(response.data)
+                setUserInfos(response.data.user)
+                setToken(response.data.token)
+                localStorage.setItem("token", response.data.token)
+                localStorage.setItem("userInfos", JSON.stringify(response.data.user))
                 navigate('/timeline')
 
             })
@@ -51,6 +61,7 @@ function LoginPage() {
         }
 
     }
+
     return (
         <Container>
             <LogoWrapper >
