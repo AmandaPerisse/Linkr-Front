@@ -85,7 +85,7 @@ function LoginPage() {
                             value={password}
                             disabled={inputLoading}
                         />
-                        <Button>{isLoading ? ("loading...") : ("Sign Up")} </Button>
+                        <Button>{isLoading ? ("loading...") : ("Log In")} </Button>
 
 
                         <LinkStyled to="/sign-up" > First time?Create an account! </LinkStyled>

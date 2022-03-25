@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
+import { publishPost, getTimeline } from "../../services/api.js";
 
 import "../../styles/reset.css";
 
@@ -11,7 +12,7 @@ export default function TimelinePage() {
     const { userInfos } = useContext(UserContext);
 
     const [urlToPost, setUrlToPost] = useState("")
-    const [commentToPost, setCommentToPost] = useState("")
+    const [postDescription, setPostDescription] = useState("")
     const [isLoading, setIsLoading] = useState(false);
     const [hoveredPost, setHoveredPost] = useState(null);
 
@@ -66,20 +67,29 @@ export default function TimelinePage() {
         },
     ];
 
-    async function handleSubmit(e) {
+    function handleSubmit(e) {
         e.preventDefault();
         setIsLoading(true);
-        console.log('postou');
+        
+            const promise = publishPost(
+                {
+                    "url": urlToPost,
+                    "description": postDescription
+                }, userInfos.token
+            );
 
-        try {
-            //await post(urlToPost, commentToPost);
-            //atualizar useEffect
-            setIsLoading(false);
+            promise.then(response => {
+                console.log(response);
+                setIsLoading(false);
+            })
 
-        } catch (error) {
-            alert("Houve um erro ao publicar seu link");   
-            setIsLoading(false);        
-        }
+            promise.catch(error => {
+                alert("Houve um erro ao publicar seu link"); 
+                console.log(error.response.status)
+                setIsLoading(false);
+            })
+
+            //atualizar useEffect        
     }
 
     function highlightHashtags(description) {
@@ -120,8 +130,8 @@ export default function TimelinePage() {
 
                         <DescriptionInput
                             placeholder="Awesome article about #javascript"
-                            onChange={(e) => setCommentToPost(e.target.value)}
-                            value={commentToPost}
+                            onChange={(e) => setPostDescription(e.target.value)}
+                            value={postDescription}
                         />
 
                         <PublishButton isLoading={isLoading}>
