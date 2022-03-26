@@ -1,24 +1,29 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from 'styled-components';
+import axios from "axios";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from  'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
 import { publishPost, getTimeline } from "../../services/api.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
-
 import "../../styles/reset.css";
 
-export default function TimelinePage() {
-    const { userInfos } = useContext(UserContext);
+export default function TimelinePage({ title, isHidden }) {
+    const { userInfos, token } = useContext(UserContext);
+
+    const { hashtag } = useParams();
+    if(!title){
+        title = `# ${hashtag}`;
+    }
 
     const [timeline, setTimeline] = useState([]);
     const [urlToPost, setUrlToPost] = useState("")
     const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
     const [timesFeedUpdated, setTimesFeedUpdated] = useState(0);
-
+    const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
@@ -45,7 +50,7 @@ export default function TimelinePage() {
                 {
                     "url": urlToPost,
                     "description": postDescription
-                }, userInfos.token
+                }, token
             );
 
             promise.then(response => {
@@ -64,10 +69,11 @@ export default function TimelinePage() {
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
         const newDescriptionArray = [];
-        
+
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
-                newDescriptionArray.push(<strong>{descriptionArray[i]} </strong>);
+                const hashtag = descriptionArray[i].replace("#", "");
+                newDescriptionArray.push(<a href = {`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -76,129 +82,183 @@ export default function TimelinePage() {
         return newDescriptionArray;
     }
 
+    useEffect(() => {
+        try{
+            if(hashtag){
+                const promiseTrendingPosts = axios.get(`http://localhost:5000/hashtag/${hashtag}`, {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendingPosts.then(response => {
+                    if(response.data){
+                        /*Colocar o mesmo que os posts da timeline*/
+                    }
+                });
+            }
+            const promiseTrendings = axios.get('http://localhost:5000/hashtag', {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendings.then(response => {
+                if(response.data){
+                    setTrendingList(response.data);
+                }
+            });
+        }
+        catch(e){
+            alert('Falha.');
+        }
+    }, []);
+
+    function Hashtags(){
+        return (
+            trendingList.map(hashtag => {
+                const id = hashtag.id;
+                const name = hashtag.name;
+                return(
+                    <HashtagName key = {id}>
+                        <a href = {`/hashtags/${name}`}># {name}</a>
+                    </HashtagName>
+                )
+                
+            })
+        )
+    }
+
     return (
         <Container isPublishing={isPublishing}>
             <Header />
-    
-            <Feed>
-                <Title to={"/timeline"}> timeline </Title>
+            <Main>
+                <Feed>
+                    <Title to={"/timeline"}> timeline </Title>
 
-                <ShareBox>
-                    <form onSubmit={handlePublishing}> 
-                        <SharedBoxQuestion>
-                            What are you going to share today?
-                        </SharedBoxQuestion>
+                    <ShareBox>
+                        <form onSubmit={handlePublishing}> 
+                            <SharedBoxQuestion>
+                                What are you going to share today?
+                            </SharedBoxQuestion>
 
-                        <LinkInput
-                            placeholder="http:/..."
-                            type="url"
-                            onChange={(e) => setUrlToPost(e.target.value)}
-                            value={urlToPost}
-                            required
-                        />
+                            <LinkInput
+                                placeholder="http:/..."
+                                type="url"
+                                onChange={(e) => setUrlToPost(e.target.value)}
+                                value={urlToPost}
+                                required
+                            />
 
-                        <DescriptionInput
-                            placeholder="Awesome article about #javascript"
-                            onChange={(e) => setPostDescription(e.target.value)}
-                            value={postDescription}
-                        />
+                            <DescriptionInput
+                                placeholder="Awesome article about #javascript"
+                                onChange={(e) => setPostDescription(e.target.value)}
+                                value={postDescription}
+                            />
 
-                        <PublishButton isPublishing={isPublishing}>
-                            {isPublishing ? 'Publishing...' : 'Publish'}
-                        </PublishButton>
-                    </form>
-                </ShareBox>
-                
-                {isLoadingFeed ?
-                    <>
-                        <Grid
-                            height="50"
-                            width="50"
-                            color='grey'
-                            ariaLabel='loading'
-                        />
-                        <h3>Loading...</h3>
-                        <PostBox>
-                            <PostLoader />
-                        </PostBox>
-
-                        <PostBox>
-                            <PostLoader />
-                        </PostBox>
-
-                        <PostBox>
-                            <PostLoader />
-                        </PostBox>
-                    </>
-
-                :
-                    timeline.length === 0 ?
-                        <h3>There are no posts yet</h3>
-                    :
-                        timeline.map( post => 
+                            <PublishButton isPublishing={isPublishing}>
+                                {isPublishing ? 'Publishing...' : 'Publish'}
+                            </PublishButton>
+                        </form>
+                    </ShareBox>
+                    
+                    {isLoadingFeed ?
+                        <>
+                            <Grid
+                                height="50"
+                                width="50"
+                                color='grey'
+                                ariaLabel='loading'
+                            />
+                            <h3>Loading...</h3>
                             <PostBox>
-                                <LeftPostContainer>
-                                    <img src={post.user.pictureUrl} alt={post.user.name} />
-                                    
-                                    {post.likedByUser ? 
-                                        <FaHeart
-                                            size={17}
-                                            color={"#AC0000"}
-                                            onMouseEnter={e => {
-                                                setHoveredPost(timeline.indexOf(post));
-                                            }}
-                                            onMouseLeave={e => {
-                                                setHoveredPost(null)
-                                            }}
-                                        />
-                                    :
-                                        <FaRegHeart
-                                            size={17}
-                                            color={"#FFFFFF"}
-                                            onMouseEnter={e => {
-                                                setHoveredPost(timeline.indexOf(post));
-                                            }}
-                                            onMouseLeave={e => {
-                                                setHoveredPost(null)
-                                            }}
-                                        />
-                                    }
-
-                                    <p>{`${post.likesAmount} likes`}</p>
-                                
-                                    <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
-                                        {post.likedBy}
-
-                                        <div/>
-                                    </LikedBy>
-                                </LeftPostContainer>
-                                
-                                <RightPostContainer>
-                                    <h1>{post.user.name}</h1>
-
-                                    <article>
-                                        <p>{highlightHashtags(post.description)}</p>
-                                    </article>
-
-                                    <a href={post.url.link} target="_blank" rel="noreferrer">
-                                        <LinkPreview>
-                                            <LinkData>
-                                                <h1>{post.url.title}</h1>
-
-                                                <p>{post.url.description}</p>
-
-                                                <h2>{post.url.link}</h2>
-                                            </LinkData>
-
-                                            <LinkImage>
-                                                <img src={post.url.image} alt={post.url.title}/>
-                                            </LinkImage>
-                                        </LinkPreview>
-                                    </a>
-                                </RightPostContainer>
+                                <PostLoader />
                             </PostBox>
-                )}
-            </Feed>
+
+                            <PostBox>
+                                <PostLoader />
+                            </PostBox>
+
+                            <PostBox>
+                                <PostLoader />
+                            </PostBox>
+                        </>
+
+                    :
+                        timeline.length === 0 ?
+                            <h3>There are no posts yet</h3>
+                        :
+                            timeline.map( post => 
+                                <PostBox>
+                                    <LeftPostContainer>
+                                        <img src={post.user.pictureUrl} alt={post.user.name} />
+                                        
+                                        {post.likedByUser ? 
+                                            <FaHeart
+                                                size={17}
+                                                color={"#AC0000"}
+                                                onMouseEnter={e => {
+                                                    setHoveredPost(timeline.indexOf(post));
+                                                }}
+                                                onMouseLeave={e => {
+                                                    setHoveredPost(null)
+                                                }}
+                                            />
+                                        :
+                                            <FaRegHeart
+                                                size={17}
+                                                color={"#FFFFFF"}
+                                                onMouseEnter={e => {
+                                                    setHoveredPost(timeline.indexOf(post));
+                                                }}
+                                                onMouseLeave={e => {
+                                                    setHoveredPost(null)
+                                                }}
+                                            />
+                                        }
+
+                                        <p>{`${post.likesAmount} likes`}</p>
+                                    
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+                                            {post.likedBy}
+
+                                            <div/>
+                                        </LikedBy>
+                                    </LeftPostContainer>
+                                    
+                                    <RightPostContainer>
+                                        <h1>{post.user.name}</h1>
+
+                                        <article>
+                                            <p>{highlightHashtags(post.description)}</p>
+                                        </article>
+
+                                        <a href={post.url.link} target="_blank" rel="noreferrer">
+                                            <LinkPreview>
+                                                <LinkData>
+                                                    <h1>{post.url.title}</h1>
+
+                                                    <p>{post.url.description}</p>
+
+                                                    <h2>{post.url.link}</h2>
+                                                </LinkData>
+
+                                                <LinkImage>
+                                                    <img src={post.url.image} alt={post.url.title}/>
+                                                </LinkImage>
+                                            </LinkPreview>
+                                        </a>
+                                    </RightPostContainer>
+                                </PostBox>
+                    )}
+                </Feed>
+                <div>
+                    <TrendingSubTitle>
+                        <SubTitle>Trending</SubTitle>
+                    </TrendingSubTitle>
+                    <TrendingHashtags>
+                        <Hashtags />
+                    </TrendingHashtags>
+                </div>
+            </Main>
         </Container>
     )
 }
@@ -223,9 +283,48 @@ const Container = styled.main`
         `)
     };
 `;
+const Main = styled.div`
+    display: flex;
+    justify-content: space-between; 
+    margin: 72px 0;
+    gap: 20px;
+`;
+const TrendingSubTitle = styled.div`
+    background-color: #171717; 
+    width: 300px;
+    margin-top: 66px;
+    border-radius: 16px 16px 0px 0px;
+    padding: 0px 15px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+`;
+const TrendingHashtags = styled.div`
+    background-color: #171717; 
+    width: 300px;
+    margin-top: 1px;
+    border-radius: 0px 0px 16px 16px;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+`;
+const SubTitle = styled.h2`
+    font-size: 27px;
+    color: #FFF;
+    font-family: Oswald;
+`;
+const HashtagName = styled.h3`
+    font-size: 19px;
+    color: #FFF;
+    font-family: Oswald;
+    a{
+        color: white;
+    }
+`;
 
 const Feed = styled.div`
-    padding: 72px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -237,28 +336,27 @@ const Feed = styled.div`
         color: #FFFFFF;
         font-weight: 700;
     }
+
+    width: 615px; //Hashtag update
 `;
 
-const Title = styled(Link)`
+const Title = styled.h1`
     font-size: 33px;
     color: #FFF;
     font-family: Oswald;
     font-weight: 700;
     margin-top: 19px;
     align-self: flex-start;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;
 
 const ShareBox = styled.div`
+    border-radius: 16px;
     width: 100%;
-    max-width: 615px;
     height: 164px;
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
+    display: ${props => props.isHidden};
 
     form {
         width: 100%;
@@ -363,8 +461,8 @@ const PublishButton = styled.button`
 `;
 
 const PostBox = styled.div`
+    border-radius: 16px;
     width: 100%;
-    max-width: 615px;
     height: auto;
     max-height: 340px;
     background-color: #171717;
