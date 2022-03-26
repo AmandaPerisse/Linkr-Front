@@ -3,13 +3,11 @@ import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router';
 import UserContext from '../../Providers/UserContext';
-import axios from 'axios';
+import { login } from '../../services/api.js';
 
 function LoginPage() {
     const navigate = useNavigate();
-    //const { userInfos, setUserInfos } = useContext(UserContext);
     const { setUserInfos, token, setToken } = useContext(UserContext);
-    console.log(token);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -22,7 +20,7 @@ function LoginPage() {
         if (token) {
             navigate('/timeline')
         }
-    }, [])
+    }, [token, navigate])
 
     function handleLogin(e) {
         e.preventDefault();
@@ -35,7 +33,7 @@ function LoginPage() {
             setInputLoading("");
         }
         else {
-            const promise = axios.post(' https://top-linkr.herokuapp.com/login', {
+            const promise = login({
                 email: email,
                 password: password
             });

@@ -10,13 +10,6 @@ export default function Header() {
     const { userInfos, setUserInfos, setToken } = useContext(UserContext);
     const navigate = useNavigate();
 
-
-    /* Quando backend estiver feito excluir userInfo*/
-    const userInfo = {
-        "name": "Vector",
-        "picture": "https://i.kym-cdn.com/entries/icons/facebook/000/023/977/cover3.jpg"
-    };
-
     function handleLogout() {
         setUserInfos(null)
         setToken(null)

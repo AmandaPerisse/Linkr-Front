@@ -12,7 +12,6 @@ import "../../styles/reset.css";
 
 export default function TimelinePage({ title, isHidden }) {
     const { userInfos, token } = useContext(UserContext);
-    console.log(userInfos)
 
     const { hashtag } = useParams();
     if (!title) {
@@ -30,7 +29,7 @@ export default function TimelinePage({ title, isHidden }) {
 
     useEffect(() => {
         setIsLoadingFeed(true);
-        const promise = getTimeline(userInfos.token);
+        const promise = getTimeline(token);
 
         promise.then((response) => {
             setIsLoadingFeed(false);
@@ -41,7 +40,37 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the posts, please refresh the page');
             setIsLoadingFeed(false);
         });
-    }, [timesFeedUpdated]);
+    }, [token, timesFeedUpdated]);
+    
+    useEffect(() => {
+        try {
+            if (hashtag) {
+                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendingPosts.then(response => {
+                    if (response.data) {
+                        /*Colocar o mesmo que os posts da timeline*/
+                    }
+                });
+            }
+            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
+                /*headers: {
+                    "Authorization": `Bearer ${token}`
+                }*/
+            });
+            promiseTrendings.then(response => {
+                if (response.data) {
+                    setTrendingList(response.data);
+                }
+            });
+        }
+        catch (e) {
+            alert('Falha.');
+        }
+    }, [hashtag]);
 
     function handlePublishing(e) {
         e.preventDefault();
@@ -83,35 +112,6 @@ export default function TimelinePage({ title, isHidden }) {
         return newDescriptionArray;
     }
 
-    useEffect(() => {
-        try {
-            if (hashtag) {
-                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
-                    /*headers: {
-                        "Authorization": `Bearer ${token}`
-                    }*/
-                });
-                promiseTrendingPosts.then(response => {
-                    if (response.data) {
-                        /*Colocar o mesmo que os posts da timeline*/
-                    }
-                });
-            }
-            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
-            promiseTrendings.then(response => {
-                if (response.data) {
-                    setTrendingList(response.data);
-                }
-            });
-        }
-        catch (e) {
-            alert('Falha.');
-        }
-    }, []);
 
     function Hashtags() {
         return (
@@ -649,14 +649,4 @@ const LikedBy = styled.div`
         left: 50%;
         transform: translate(-50%, -50%);
     }
-`;
-
-const LoadingFeed = styled.div`
-    height: 100%;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    color: #FFFFFF;
-    font-size: 30px;
-
 `;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { signup } from '../../services/api.js';
 
 function SignUpPage() {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ function SignUpPage() {
             setInputLoading("");
         }
         else {
-            const promise = axios.post('https://top-linkr.herokuapp.com/users', {
+            const promise = signup({
                 username: username,
                 email: email,
                 password: password,
