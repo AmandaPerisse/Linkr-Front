@@ -10,17 +10,6 @@ const PostContainer = styled.div`
     justify-content: space-between;
     gap: 10px;
 
-    h1 {
-        font-weight: 400;
-        font-size: 17px;
-        text-align: left;
-        color: #FFFFFF;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        cursor: pointer;
-    }
-
     article {
         width: 100%;
         height: auto;
@@ -44,6 +33,44 @@ const PostContainer = styled.div`
             color: #FFFFFF;
         }
     }
+`;
+
+const UsernameWrapper = styled.div`
+    display: flex;
+    align-items:center;
+    justify-content: space-between;
+    background-color: red ;
+    width: 100%;
+    min-height: 30px
+
+    h1 {
+        font-weight: 400;
+        font-size: 17px;
+        text-align: left;
+        color: #FFFFFF;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        cursor: pointer;
+    }
+`;
+const IconsWrapper = styled.div`
+    display: flex;
+    align-items:center;
+    justify-content: space-between;
+    min-height: 30px;
+    background-color: green ;
+    cursor: pointer;
+    svg{
+        color: #fff;
+        height: 22px;
+        width: 22px;
+        :hover{
+            color: var(--button-color);
+            filter: brightness(70%);
+        }
+    }
+
 `;
 
 const LinkPreview = styled.div`
@@ -118,4 +145,4 @@ const LinkImage = styled.div`
     }
 `;
 
-export { PostContainer, LinkPreview, LinkData, LinkImage }
+export { PostContainer, UsernameWrapper, LinkPreview, LinkData, LinkImage, IconsWrapper }

@@ -1,8 +1,10 @@
 import React from 'react';
-
-import { PostContainer, LinkPreview, LinkData, LinkImage } from './styles';
+import { IoMdTrash } from 'react-icons/io'
+import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper } from './styles';
 
 function PostInfos({ post }) {
+
+    console.log(post)
 
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
@@ -24,7 +26,12 @@ function PostInfos({ post }) {
 
     return (
         <PostContainer>
-            <h1>{post.user.name}</h1>
+            <UsernameWrapper>
+                <h1>{post.user.name}</h1>
+                <IconsWrapper>
+                    <IoMdTrash />
+                </IconsWrapper>
+            </UsernameWrapper>
 
             <article>
                 <p>{highlightHashtags(post.description)}</p>
