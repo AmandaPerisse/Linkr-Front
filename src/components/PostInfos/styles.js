@@ -39,7 +39,6 @@ const UsernameWrapper = styled.div`
     display: flex;
     align-items:center;
     justify-content: space-between;
-    background-color: red ;
     width: 100%;
     min-height: 30px
 
@@ -59,7 +58,6 @@ const IconsWrapper = styled.div`
     align-items:center;
     justify-content: space-between;
     min-height: 30px;
-    background-color: green ;
     cursor: pointer;
     svg{
         color: #fff;
