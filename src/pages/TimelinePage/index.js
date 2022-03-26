@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import axios from "axios";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
-import { Grid } from  'react-loader-spinner'
+import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
 import { publishPost, getTimeline } from "../../services/api.js";
@@ -12,9 +12,10 @@ import "../../styles/reset.css";
 
 export default function TimelinePage({ title, isHidden }) {
     const { userInfos, token } = useContext(UserContext);
+    console.log(userInfos)
 
     const { hashtag } = useParams();
-    if(!title){
+    if (!title) {
         title = `# ${hashtag}`;
     }
 
@@ -30,40 +31,40 @@ export default function TimelinePage({ title, isHidden }) {
     useEffect(() => {
         setIsLoadingFeed(true);
         const promise = getTimeline(userInfos.token);
-    
+
         promise.then((response) => {
             setIsLoadingFeed(false);
-          setTimeline([...response.data]);
+            setTimeline([...response.data]);
         });
-    
+
         promise.catch((error) => {
             alert('An error occured while trying to fetch the posts, please refresh the page');
             setIsLoadingFeed(false);
         });
-      }, [timesFeedUpdated]);
+    }, [timesFeedUpdated]);
 
     function handlePublishing(e) {
         e.preventDefault();
         setIsPublishing(true);
-        
-            const promise = publishPost(
-                {
-                    "url": urlToPost,
-                    "description": postDescription
-                }, token
-            );
 
-            promise.then(response => {
-                setTimesFeedUpdated(timesFeedUpdated + 1);
-                setIsPublishing(false);
-            })
+        const promise = publishPost(
+            {
+                "url": urlToPost,
+                "description": postDescription
+            }, token
+        );
 
-            promise.catch(error => {
-                alert("Houve um erro ao publicar seu link"); 
-                console.log(error.response.status)
-                setIsPublishing(false);
-            })
-            console.log(timesFeedUpdated);
+        promise.then(response => {
+            setTimesFeedUpdated(timesFeedUpdated + 1);
+            setIsPublishing(false);
+        })
+
+        promise.catch(error => {
+            alert("Houve um erro ao publicar seu link");
+            console.log(error.response.status)
+            setIsPublishing(false);
+        })
+        console.log(timesFeedUpdated);
     }
 
     function highlightHashtags(description) {
@@ -73,7 +74,7 @@ export default function TimelinePage({ title, isHidden }) {
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
-                newDescriptionArray.push(<a href = {`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+                newDescriptionArray.push(<a href={`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -83,46 +84,46 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     useEffect(() => {
-        try{
-            if(hashtag){
-                const promiseTrendingPosts = axios.get(`http://localhost:5000/hashtag/${hashtag}`, {
+        try {
+            if (hashtag) {
+                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
                     /*headers: {
                         "Authorization": `Bearer ${token}`
                     }*/
                 });
                 promiseTrendingPosts.then(response => {
-                    if(response.data){
+                    if (response.data) {
                         /*Colocar o mesmo que os posts da timeline*/
                     }
                 });
             }
-            const promiseTrendings = axios.get('http://localhost:5000/hashtag', {
-                    /*headers: {
-                        "Authorization": `Bearer ${token}`
-                    }*/
-                });
-                promiseTrendings.then(response => {
-                if(response.data){
+            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
+                /*headers: {
+                    "Authorization": `Bearer ${token}`
+                }*/
+            });
+            promiseTrendings.then(response => {
+                if (response.data) {
                     setTrendingList(response.data);
                 }
             });
         }
-        catch(e){
+        catch (e) {
             alert('Falha.');
         }
     }, []);
 
-    function Hashtags(){
+    function Hashtags() {
         return (
             trendingList.map(hashtag => {
                 const id = hashtag.id;
                 const name = hashtag.name;
-                return(
-                    <HashtagName key = {id}>
-                        <a href = {`/hashtags/${name}`}># {name}</a>
+                return (
+                    <HashtagName key={id}>
+                        <a href={`/hashtags/${name}`}># {name}</a>
                     </HashtagName>
                 )
-                
+
             })
         )
     }
@@ -135,7 +136,7 @@ export default function TimelinePage({ title, isHidden }) {
                     <Title to={"/timeline"}> timeline </Title>
 
                     <ShareBox>
-                        <form onSubmit={handlePublishing}> 
+                        <form onSubmit={handlePublishing}>
                             <SharedBoxQuestion>
                                 What are you going to share today?
                             </SharedBoxQuestion>
@@ -159,7 +160,7 @@ export default function TimelinePage({ title, isHidden }) {
                             </PublishButton>
                         </form>
                     </ShareBox>
-                    
+
                     {isLoadingFeed ?
                         <>
                             <Grid
@@ -182,16 +183,16 @@ export default function TimelinePage({ title, isHidden }) {
                             </PostBox>
                         </>
 
-                    :
+                        :
                         timeline.length === 0 ?
                             <h3>There are no posts yet</h3>
-                        :
-                            timeline.map( post => 
+                            :
+                            timeline.map(post =>
                                 <PostBox>
                                     <LeftPostContainer>
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
-                                        
-                                        {post.likedByUser ? 
+
+                                        {post.likedByUser ?
                                             <FaHeart
                                                 size={17}
                                                 color={"#AC0000"}
@@ -202,7 +203,7 @@ export default function TimelinePage({ title, isHidden }) {
                                                     setHoveredPost(null)
                                                 }}
                                             />
-                                        :
+                                            :
                                             <FaRegHeart
                                                 size={17}
                                                 color={"#FFFFFF"}
@@ -216,14 +217,14 @@ export default function TimelinePage({ title, isHidden }) {
                                         }
 
                                         <p>{`${post.likesAmount} likes`}</p>
-                                    
-                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? {display: 'block'} : {display: 'none'}} >
+
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
                                             {post.likedBy}
 
-                                            <div/>
+                                            <div />
                                         </LikedBy>
                                     </LeftPostContainer>
-                                    
+
                                     <RightPostContainer>
                                         <h1>{post.user.name}</h1>
 
@@ -242,13 +243,13 @@ export default function TimelinePage({ title, isHidden }) {
                                                 </LinkData>
 
                                                 <LinkImage>
-                                                    <img src={post.url.image} alt={post.url.title}/>
+                                                    <img src={post.url.image} alt={post.url.title} />
                                                 </LinkImage>
                                             </LinkPreview>
                                         </a>
                                     </RightPostContainer>
                                 </PostBox>
-                    )}
+                            )}
                 </Feed>
                 <div>
                     <TrendingSubTitle>
@@ -278,7 +279,7 @@ const Container = styled.main`
     }
 
     ${({ isPublishing }) =>
-        (isPublishing && `
+    (isPublishing && `
             pointer-events: none !important;
         `)
     };
@@ -453,7 +454,7 @@ const PublishButton = styled.button`
     cursor: pointer;
 
     ${({ isPublishing }) =>
-        (isPublishing && `
+    (isPublishing && `
             opacity: 0.7 !important;
             pointer-events: none !important;
         `)

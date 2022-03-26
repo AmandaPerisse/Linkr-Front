@@ -9,7 +9,7 @@ function SignUpPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [userName, setUserName] = useState('');
+    const [username, setUserName] = useState('');
     const [url, setUrl] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,14 +20,14 @@ function SignUpPage() {
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password === "" || userName === "" || url === "") {
+        if (email === "" || password === "" || username === "" || url === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
         }
         else {
-            const promise = axios.post('http://localhost:5000/users', {
-                userName: userName,
+            const promise = axios.post('https://top-linkr.herokuapp.com/users', {
+                username: username,
                 email: email,
                 password: password,
                 pictureUrl: url
@@ -90,7 +90,7 @@ function SignUpPage() {
                             type="username"
                             placeholder="username"
                             onChange={(e) => setUserName(e.target.value)}
-                            value={userName}
+                            value={username}
                             disabled={inputLoading}
                         />
                         <Input

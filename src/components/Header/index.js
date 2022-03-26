@@ -1,20 +1,28 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import styled from 'styled-components';
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
 
 export default function Header() {
-    const { userInfos, setUserInfos } = useContext(UserContext);
     const [showLogoutBox, setShowLogoutBox] = useState(false);
+
+    const { userInfos, setUserInfos, setToken } = useContext(UserContext);
     const navigate = useNavigate();
 
+
+    /* Quando backend estiver feito excluir userInfo*/
+    const userInfo = {
+        "name": "Vector",
+        "picture": "https://i.kym-cdn.com/entries/icons/facebook/000/023/977/cover3.jpg"
+    };
+
     function handleLogout() {
-        console.log('logout');
-        setUserInfos(null);
-        localStorage.removeItem('auth');
-        navigate("/");   
+        setUserInfos(null)
+        setToken(null)
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfos');
+        navigate("/");
     }
 
     return (
@@ -30,7 +38,7 @@ export default function Header() {
                         color={"#FFFFFF"}
                         onClick={e => setShowLogoutBox(false)}
                     />
-                :
+                    :
                     <FaChevronDown
                         size={20}
                         color={"#FFFFFF"}
@@ -38,7 +46,7 @@ export default function Header() {
                     />
                 }
 
-                <img src={userInfos.user.pictureUrl} />
+                <img src={userInfos.pictureUrl} />
                 {showLogoutBox &&
                     <LogoutBox
                         onClick={e => handleLogout()}
@@ -56,7 +64,6 @@ const HeaderContainer = styled.header`
     z-index: 1;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 72px;
     background-color: #151515;
@@ -64,7 +71,6 @@ const HeaderContainer = styled.header`
     align-items: center;
     justify-content: space-between;
     padding: 0 15px;
-
     a {
         font-family: Passion One;
         font-size: 45px;
@@ -73,7 +79,6 @@ const HeaderContainer = styled.header`
         text-align: left;
         color: #FFFFFF; 
     }
-
     div {
         height: 100%;
         display: flex;
@@ -81,7 +86,6 @@ const HeaderContainer = styled.header`
         justify-content: space-between;
         gap: 12px;
     }
-
     img {
         width: 44px;
         height: 44px;
@@ -89,6 +93,12 @@ const HeaderContainer = styled.header`
         background-color: #FFFFFF;
         object-fit: cover;
         cursor: pointer;
+    }
+    svg{
+       cursor: pointer; 
+       :hover{
+            filter: brightness(95%);
+        }
     }
 `;
 
@@ -110,6 +120,8 @@ const LogoutBox = styled.div`
     font-weight: 700;
     line-height: 18px;
     letter-spacing: 0.05em;
-
     cursor: pointer;
+    :hover{
+        filter: brightness(95%);
+    }
 `;
