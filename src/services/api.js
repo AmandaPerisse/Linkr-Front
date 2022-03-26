@@ -1,8 +1,6 @@
 import axios from "axios";
 
-//const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const BASE_URL = "https://top-linkr.herokuapp.com";
-//const BASE_URL = "http://localhost:5000";
 
 function createConfig(token) {
   return { headers: { Authorization: `Bearer ${token}` } };
@@ -22,8 +20,8 @@ async function publishPost(body, token) {
 }
 
 async function getTimeline(token) {
-    const config = createConfig(token);
-    return await axios.get(`${BASE_URL}/feed`, config);
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/feed`, config);
 }
 
 export { signup, login, publishPost, getTimeline };
