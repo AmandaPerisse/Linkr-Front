@@ -1,88 +1,99 @@
 import { useState, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from 'styled-components';
-import { FaRegHeart, FaHeart, FaChevronDown } from 'react-icons/fa';
+import axios from "axios";
+import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import axios from "axios";
-
+import { publishPost, getTimeline } from "../../services/api.js";
+import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 
-export default function TimelinePage() {
+export default function TimelinePage({ title, isHidden }) {
     const { userInfos, token } = useContext(UserContext);
-    console.log(token, userInfos);
 
-    const [urlToPost, setUrlToPost] = useState("");
-    const [commentToPost, setCommentToPost] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const { hashtag } = useParams();
+    if (!title) {
+        title = `# ${hashtag}`;
+    }
+
+    const [timeline, setTimeline] = useState([]);
+    const [urlToPost, setUrlToPost] = useState("")
+    const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
+    const [timesFeedUpdated, setTimesFeedUpdated] = useState(0);
     const [trendingList, setTrendingList] = useState([]);
+    const [isPublishing, setIsPublishing] = useState(false);
+    const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
-    const timeline = [
-        {
-            "user": {
-                "name": "Juvenal Juvêncio",
-                "picture": "https://i.pinimg.com/originals/f8/f3/01/f8f301698392ee89abd583fe98c83a54.jpg"
-            },
-            "url": {
-                "link": "https://reactjs.org",
-                "title": "Como aplicar o Material UI em um projeto React",
-                "description": "Hey! I have moved this tutorial to my personal blog. Same content, new location. Sorry about making you click through to another page.",
-                "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
-            },
-            "description": "Muito maneiro esse tutorial de Material UI com React, deem uma olhada! #react #material",
-            "likesQty": 13,
-            "likedByUser": true,
-            "likedBy": "Você, João, Maria e outras 11 pessoas"
-        },
-        {
-            "user": {
-                "name": "Juvenal Juvêncio",
-                "picture": "https://i.kym-cdn.com/entries/icons/original/000/016/546/hidethepainharold.jpg"
-            },
-            "url": {
-                "link": "https://github.com/",
-                "title": "GitHub: Where the world builds software",
-                "description": "GitHub is where over 73 million developers shape the future of software, together. Contribute to the open source community, manage your Git repositories, review code like a pro, track bugs and feat...",
-                "image": "https://cdn.peekalink.io/public/images/57900b1c-d279-47f7-af5f-aae4f3ca08d0/52fed94c-ecf2-4e00-809b-ca681d2431d2.jpg"
-            },
-            "description": "Muito mane#iro esse tutorial de Material UI com React, deem uma olhada! #react #material",
-            "likesQty": 25,
-            "likedByUser": false,
-            "likedBy": "João, Maria e outras 23 pessoas"
-        },
-        {
-            "user": {
-                "name": "Juju",
-                "picture": "https://i.pinimg.com/originals/f8/f3/01/f8f301698392ee89abd583fe98c83a54.jpg"
-            },
-            "url": {
-                "link": "https://reactjs.org",
-                "title": "Como aplicar o React",
-                "description": "Hey! I  blog.  , new .     click through to another page.",
-                "image": "https://cdn.peekalink.io/public/images/22134683-c5b4-432f-876c-ed6e54be862a/30334247-635e-4d6d-907d-0ec39dd2ec5b.jpg"
-            },
-            "description": "Muito #maneiro UI, #material",
-            "likesQty": 13,
-            "likedByUser": false,
-            "likedBy": "João, Maria e outras 23 pessoas"
-        },
-    ];
+    useEffect(() => {
+        setIsLoadingFeed(true);
+        const promise = getTimeline(token);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-        setIsLoading(true);
-        console.log('postou');
+        promise.then((response) => {
+            setIsLoadingFeed(false);
+            setTimeline([...response.data]);
+        });
 
+        promise.catch((error) => {
+            alert('An error occured while trying to fetch the posts, please refresh the page');
+            setIsLoadingFeed(false);
+        });
+    }, [token, timesFeedUpdated]);
+    
+    useEffect(() => {
         try {
-            //await post(urlToPost, commentToPost);
-            //atualizar useEffect
-            setIsLoading(false);
-
-        } catch (error) {
-            alert("Houve um erro ao publicar seu link");
-            setIsLoading(false);
+            if (hashtag) {
+                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
+                    /*headers: {
+                        "Authorization": `Bearer ${token}`
+                    }*/
+                });
+                promiseTrendingPosts.then(response => {
+                    if (response.data) {
+                        /*Colocar o mesmo que os posts da timeline*/
+                    }
+                });
+            }
+            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
+                /*headers: {
+                    "Authorization": `Bearer ${token}`
+                }*/
+            });
+            promiseTrendings.then(response => {
+                if (response.data) {
+                    setTrendingList(response.data);
+                }
+            });
         }
+        catch (e) {
+            alert('Falha.');
+        }
+    }, [hashtag]);
+
+    function handlePublishing(e) {
+        e.preventDefault();
+        setIsPublishing(true);
+
+        const promise = publishPost(
+            {
+                "url": urlToPost,
+                "description": postDescription
+            }, token
+        );
+
+        promise.then(response => {
+            setTimesFeedUpdated(timesFeedUpdated + 1);
+            setIsPublishing(false);
+        })
+
+        promise.catch(error => {
+            alert("Houve um erro ao publicar seu link");
+            console.log(error.response.status)
+            setIsPublishing(false);
+        })
+        console.log(timesFeedUpdated);
     }
 
     function highlightHashtags(description) {
@@ -92,7 +103,9 @@ export default function TimelinePage() {
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
-                newDescriptionArray.push(<a href={`/hashtag/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+              
+                newDescriptionArray.push(<a href={`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -101,23 +114,7 @@ export default function TimelinePage() {
         return newDescriptionArray;
     }
 
-    useEffect(() => {
-        try {
-            const promise = axios.get('http:// https://top-linkr.herokuapp.com/timeline', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
-            promise.then(response => {
-                if (response.data) {
-                    setTrendingList(response.data);
-                }
-            });
-        }
-        catch (e) {
-            alert('Falha.');
-        }
-    }, []);
+
 
     function Hashtags() {
         return (
@@ -126,7 +123,8 @@ export default function TimelinePage() {
                 const name = hashtag.name;
                 return (
                     <HashtagName key={id}>
-                        <a href={`hashtag/${name}`}># {name}</a>
+                        <a href={`/hashtags/${name}`}># {name}</a>
+
                     </HashtagName>
                 )
 
@@ -135,14 +133,15 @@ export default function TimelinePage() {
     }
 
     return (
-        <Container isLoading={isLoading}>
+        <Container isPublishing={isPublishing}>
             <Header />
             <Main>
                 <Feed>
                     <Title to={"/timeline"}> timeline </Title>
 
                     <ShareBox>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handlePublishing}>
+
                             <SharedBoxQuestion>
                                 What are you going to share today?
                             </SharedBoxQuestion>
@@ -157,79 +156,106 @@ export default function TimelinePage() {
 
                             <DescriptionInput
                                 placeholder="Awesome article about #javascript"
-                                onChange={(e) => setCommentToPost(e.target.value)}
-                                value={commentToPost}
+                                onChange={(e) => setPostDescription(e.target.value)}
+                                value={postDescription}
                             />
 
-                            <PublishButton isLoading={isLoading}>
-                                {isLoading ? 'Publishing...' : 'Publish'}
+                            <PublishButton isPublishing={isPublishing}>
+                                {isPublishing ? 'Publishing...' : 'Publish'}
                             </PublishButton>
                         </form>
                     </ShareBox>
 
-                    {timeline.map(post =>
-                        <PostBox>
-                            <LeftPostContainer>
-                                <img src={post.user.picture} alt={post.user.name} />
+                    {isLoadingFeed ?
+                        <>
+                            <Grid
+                                height="50"
+                                width="50"
+                                color='grey'
+                                ariaLabel='loading'
+                            />
+                            <h3>Loading...</h3>
+                            <PostBox>
+                                <PostLoader />
+                            </PostBox>
 
-                                {post.likedByUser ?
-                                    <FaHeart
-                                        size={17}
-                                        color={"#AC0000"}
-                                        onMouseEnter={e => {
-                                            setHoveredPost(timeline.indexOf(post));
-                                        }}
-                                        onMouseLeave={e => {
-                                            setHoveredPost(null)
-                                        }}
-                                    />
-                                    :
-                                    <FaRegHeart
-                                        size={17}
-                                        color={"#FFFFFF"}
-                                        onMouseEnter={e => {
-                                            setHoveredPost(timeline.indexOf(post));
-                                        }}
-                                        onMouseLeave={e => {
-                                            setHoveredPost(null)
-                                        }}
-                                    />
-                                }
+                            <PostBox>
+                                <PostLoader />
+                            </PostBox>
 
-                                <p>{`${post.likesQty} likes`}</p>
+                            <PostBox>
+                                <PostLoader />
+                            </PostBox>
+                        </>
 
-                                <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
-                                    {post.likedBy}
+                        :
+                        timeline.length === 0 ?
+                            <h3>There are no posts yet</h3>
+                            :
+                            timeline.map(post =>
+                                <PostBox>
+                                    <LeftPostContainer>
+                                        <img src={post.user.pictureUrl} alt={post.user.name} />
 
-                                    <div />
-                                </LikedBy>
-                            </LeftPostContainer>
+                                        {post.likedByUser ?
+                                            <FaHeart
+                                                size={17}
+                                                color={"#AC0000"}
+                                                onMouseEnter={e => {
+                                                    setHoveredPost(timeline.indexOf(post));
+                                                }}
+                                                onMouseLeave={e => {
+                                                    setHoveredPost(null)
+                                                }}
+                                            />
+                                            :
+                                            <FaRegHeart
+                                                size={17}
+                                                color={"#FFFFFF"}
+                                                onMouseEnter={e => {
+                                                    setHoveredPost(timeline.indexOf(post));
+                                                }}
+                                                onMouseLeave={e => {
+                                                    setHoveredPost(null)
+                                                }}
+                                            />
+                                        }
 
-                            <RightPostContainer>
-                                <h1>{post.user.name}</h1>
+                                        <p>{`${post.likesAmount} likes`}</p>
 
-                                <article>
-                                    <p>{highlightHashtags(post.description)}</p>
-                                </article>
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
+                                            {post.likedBy}
 
-                                <a href={post.url.link} target="_blank" rel="noreferrer">
-                                    <LinkPreview>
-                                        <LinkData>
-                                            <h1>{post.url.title}</h1>
+                                            <div />
+                                        </LikedBy>
+                                    </LeftPostContainer>
 
-                                            <p>{post.url.description}</p>
+                                    <RightPostContainer>
+                                        <h1>{post.user.name}</h1>
 
-                                            <h2>{post.url.link}</h2>
-                                        </LinkData>
+                                        <article>
+                                            <p>{highlightHashtags(post.description)}</p>
+                                        </article>
 
-                                        <LinkImage>
-                                            <img src={post.url.image} alt={post.url.title} />
-                                        </LinkImage>
-                                    </LinkPreview>
-                                </a>
-                            </RightPostContainer>
-                        </PostBox>
-                    )}
+                                        <a href={post.url.link} target="_blank" rel="noreferrer">
+                                            <LinkPreview>
+                                                <LinkData>
+                                                    <h1>{post.url.title}</h1>
+
+                                                    <p>{post.url.description}</p>
+
+                                                    <h2>{post.url.link}</h2>
+                                                </LinkData>
+
+                                                <LinkImage>
+                                                    <img src={post.url.image} alt={post.url.title} />
+                                                </LinkImage>
+                                            </LinkPreview>
+                                        </a>
+                                    </RightPostContainer>
+                                </PostBox>
+                            )}
+
                 </Feed>
                 <div>
                     <TrendingSubTitle>
@@ -258,8 +284,8 @@ const Container = styled.main`
         box-sizing: border-box;
     }
 
-    ${({ isLoading }) =>
-    (isLoading && `
+    ${({ isPublishing }) =>
+    (isPublishing && `
             pointer-events: none !important;
         `)
     };
@@ -279,7 +305,6 @@ const TrendingSubTitle = styled.div`
     height: 55px;
     display: flex;
     align-items: center;
-    justify-content: center;
 `;
 const TrendingHashtags = styled.div`
     background-color: #171717; 
@@ -311,20 +336,24 @@ const Feed = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    width: 615px;
+
+    h3 {
+        font-family: Lato;
+        font-size: 25px;
+        color: #FFFFFF;
+        font-weight: 700;
+    }
+
+    width: 615px; //Hashtag update
 `;
 
-const Title = styled(Link)`
+const Title = styled.h1`
     font-size: 33px;
     color: #FFF;
     font-family: Oswald;
     font-weight: 700;
     margin-top: 19px;
     align-self: flex-start;
-
-    &:hover {
-        text-decoration: underline;
-    }
 `;
 
 const ShareBox = styled.div`
@@ -334,6 +363,7 @@ const ShareBox = styled.div`
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
+    display: ${props => props.isHidden};
 
     form {
         width: 100%;
@@ -429,8 +459,8 @@ const PublishButton = styled.button`
 
     cursor: pointer;
 
-    ${({ isLoading }) =>
-    (isLoading && `
+    ${({ isPublishing }) =>
+    (isPublishing && `
             opacity: 0.7 !important;
             pointer-events: none !important;
         `)

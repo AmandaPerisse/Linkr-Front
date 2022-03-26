@@ -11,7 +11,7 @@ function App() {
   const initialUserInfos = localStorage.getItem("userInfos")
 
   const [userInfos, setUserInfos] = useState(JSON.parse(initialUserInfos));
-  const [token, setToken] = useState(initialToken)
+  const [token, setToken] = useState(initialToken);
 
   return (
 
@@ -19,10 +19,10 @@ function App() {
       <BrowserRouter>
         <GlobalStyles />
         <Routes>
-          {/* <Route path="/" element={<TimelinePage />}></Route> Remover essa linha e descomentar a debaixo */}
           <Route path="/" element={<LoginPage />}></Route>
           <Route path="/sign-up" element={<SignUpPage />}></Route>
-          <Route path="/timeline" element={<TimelinePage />}></Route>
+          <Route path="/timeline" element={<TimelinePage title = "timeline" isHidden = "block"/>}></Route>
+          <Route path="/hashtags/:hashtag" element={<TimelinePage title = "" isHidden = "none"/>}></Route>
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

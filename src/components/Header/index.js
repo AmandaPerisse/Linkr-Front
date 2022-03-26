@@ -11,12 +11,6 @@ export default function Header() {
     const navigate = useNavigate();
 
 
-    /* Quando backend estiver feito excluir userInfo*/
-    const userInfo = {
-        "name": "Vector",
-        "picture": "https://i.kym-cdn.com/entries/icons/facebook/000/023/977/cover3.jpg"
-    };
-
     function handleLogout() {
         setUserInfos(null)
         setToken(null)
@@ -64,7 +58,6 @@ const HeaderContainer = styled.header`
     z-index: 1;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 72px;
     background-color: #151515;
@@ -72,7 +65,6 @@ const HeaderContainer = styled.header`
     align-items: center;
     justify-content: space-between;
     padding: 0 15px;
-
     a {
         font-family: Passion One;
         font-size: 45px;
@@ -81,7 +73,6 @@ const HeaderContainer = styled.header`
         text-align: left;
         color: #FFFFFF; 
     }
-
     div {
         height: 100%;
         display: flex;
@@ -89,7 +80,6 @@ const HeaderContainer = styled.header`
         justify-content: space-between;
         gap: 12px;
     }
-
     img {
         width: 44px;
         height: 44px;

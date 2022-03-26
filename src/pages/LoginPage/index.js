@@ -3,12 +3,11 @@ import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router';
 import UserContext from '../../Providers/UserContext';
-import axios from 'axios';
+import { login } from '../../services/api.js';
 
 function LoginPage() {
     const navigate = useNavigate();
     const { setUserInfos, token, setToken } = useContext(UserContext);
-
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,20 +20,21 @@ function LoginPage() {
         if (token) {
             navigate('/timeline')
         }
-    }, [])
+    }, [token, navigate])
 
     function handleLogin(e) {
         e.preventDefault();
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password == "") {
+        if (email === "" || password === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
         }
         else {
-            const promise = axios.post(' https://top-linkr.herokuapp.com/login', {
+            const promise = login({
+
                 email: email,
                 password: password
             });
@@ -59,7 +59,6 @@ function LoginPage() {
                 setInputLoading("");
             })
         }
-
     }
 
     return (
@@ -97,7 +96,7 @@ function LoginPage() {
                             value={password}
                             disabled={inputLoading}
                         />
-                        <Button>{isLoading ? ("loading...") : ("Sign Up")} </Button>
+                        <Button>{isLoading ? ("loading...") : ("Log In")} </Button>
 
 
                         <LinkStyled to="/sign-up" > First time?Create an account! </LinkStyled>
