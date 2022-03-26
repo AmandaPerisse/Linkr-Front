@@ -10,6 +10,7 @@ export default function Header() {
     const { userInfos, setUserInfos, setToken } = useContext(UserContext);
     const navigate = useNavigate();
 
+
     function handleLogout() {
         setUserInfos(null)
         setToken(null)

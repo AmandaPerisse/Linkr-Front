@@ -34,6 +34,7 @@ function LoginPage() {
         }
         else {
             const promise = login({
+
                 email: email,
                 password: password
             });

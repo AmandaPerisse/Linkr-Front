@@ -103,7 +103,9 @@ export default function TimelinePage({ title, isHidden }) {
         for (let i = 0; i < descriptionArray.length; i++) {
             if (descriptionArray[i][0] === "#") {
                 const hashtag = descriptionArray[i].replace("#", "");
+              
                 newDescriptionArray.push(<a href={`/hashtags/${hashtag}`}><strong>{descriptionArray[i]}</strong> </a>);
+
                 continue;
             }
             newDescriptionArray.push(`${descriptionArray[i]} `);
@@ -111,6 +113,7 @@ export default function TimelinePage({ title, isHidden }) {
 
         return newDescriptionArray;
     }
+
 
 
     function Hashtags() {
@@ -121,6 +124,7 @@ export default function TimelinePage({ title, isHidden }) {
                 return (
                     <HashtagName key={id}>
                         <a href={`/hashtags/${name}`}># {name}</a>
+
                     </HashtagName>
                 )
 
@@ -137,6 +141,7 @@ export default function TimelinePage({ title, isHidden }) {
 
                     <ShareBox>
                         <form onSubmit={handlePublishing}>
+
                             <SharedBoxQuestion>
                                 What are you going to share today?
                             </SharedBoxQuestion>
@@ -250,6 +255,7 @@ export default function TimelinePage({ title, isHidden }) {
                                     </RightPostContainer>
                                 </PostBox>
                             )}
+
                 </Feed>
                 <div>
                     <TrendingSubTitle>
