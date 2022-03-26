@@ -40,9 +40,9 @@ const UsernameWrapper = styled.div`
     align-items:center;
     justify-content: space-between;
     width: 100%;
-    min-height: 30px
+    min-height: 30px;
 
-    h1 {
+    h1{
         font-weight: 400;
         font-size: 17px;
         text-align: left;
@@ -81,6 +81,7 @@ const LinkPreview = styled.div`
     align-items: stretch;
     cursor: pointer;
 `;
+
 const LinkData = styled.div`
     width: 68%;
     padding: 10px;

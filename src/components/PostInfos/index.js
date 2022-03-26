@@ -1,10 +1,27 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
+import UserContext from '../../Providers/UserContext';
 import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper } from './styles';
 
 function PostInfos({ post }) {
+    const [userInfos, setUserInfos] = useState([]);
 
     console.log(post)
+    const { token } = useContext(UserContext);
+
+    useEffect(() => {
+        const promise = axios.get(`http://localhost:5000/users`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        promise.then(response => {
+            setUserInfos(response.data);
+        });
+        promise.catch(error => console.log("erro#1-PlansPage: ", error.response));
+
+    }, [])
 
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
@@ -24,12 +41,18 @@ function PostInfos({ post }) {
         return newDescriptionArray;
     }
 
+    function cancelPlan() {
+        console.log("cancelar")
+
+    }
+
+
     return (
         <PostContainer>
             <UsernameWrapper>
                 <h1>{post.user.name}</h1>
                 <IconsWrapper>
-                    <IoMdTrash />
+                    {post.user.id === userInfos.id ? (<IoMdTrash onClick={() => cancelPlan()} ></IoMdTrash>) : <></>}
                 </IconsWrapper>
             </UsernameWrapper>
 
