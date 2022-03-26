@@ -93,7 +93,6 @@ export default function TimelinePage({ title, isHidden }) {
             console.log(error.response.status)
             setIsPublishing(false);
         })
-        console.log(timesFeedUpdated);
     }
 
     function highlightHashtags(description) {

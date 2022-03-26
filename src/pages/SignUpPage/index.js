@@ -9,7 +9,7 @@ function SignUpPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUserName] = useState('');
+    const [userName, setUserName] = useState('');
     const [url, setUrl] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,7 +20,7 @@ function SignUpPage() {
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password === "" || username === "" || url === "") {
+        if (email === "" || password === "" || userName === "" || url === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
@@ -28,7 +28,7 @@ function SignUpPage() {
         else {
             const promise = signup({
 
-                username: username,
+                userName: userName,
                 email: email,
                 password: password,
                 pictureUrl: url
@@ -91,7 +91,7 @@ function SignUpPage() {
                             type="username"
                             placeholder="username"
                             onChange={(e) => setUserName(e.target.value)}
-                            value={username}
+                            value={userName}
                             disabled={inputLoading}
                         />
                         <Input
