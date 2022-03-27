@@ -27,8 +27,7 @@ function SignUpPage() {
         }
         else {
             const promise = signup({
-
-                userName: userName,
+                name: userName,
                 email: email,
                 password: password,
                 pictureUrl: url

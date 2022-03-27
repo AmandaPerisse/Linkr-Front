@@ -75,6 +75,8 @@ export default function TimelinePage({ title, isHidden }) {
     function handlePublishing(e) {
         e.preventDefault();
         setIsPublishing(true);
+        setUrlToPost('');
+        setPostDescription('');
 
         const promise = publishPost(
             {
