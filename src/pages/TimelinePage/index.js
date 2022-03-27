@@ -14,7 +14,7 @@ import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 
 
 export default function TimelinePage({ title, isHidden }) {
-    const { userInfos, token } = useContext(UserContext);
+    const { token } = useContext(UserContext);
 
     const { hashtag } = useParams();
     if (!title) {
@@ -137,6 +137,7 @@ export default function TimelinePage({ title, isHidden }) {
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
                             <h3>Loading...</h3>
+                            <PostBox><PostLoader /></PostBox>
                         </>
                         :
                         timeline.length === 0 ?
