@@ -14,7 +14,7 @@ import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 
 
 export default function TimelinePage({ title, isHidden }) {
-    const { userInfos, token } = useContext(UserContext);
+    const { token } = useContext(UserContext);
 
     const { hashtag } = useParams();
     if (!title) {
