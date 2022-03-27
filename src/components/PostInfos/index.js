@@ -1,13 +1,17 @@
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
 import UserContext from '../../Providers/UserContext';
 import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper } from './styles';
+import { deletePost } from '../../services/api';
 
 function PostInfos({ post }) {
     const [userInfos, setUserInfos] = useState([]);
+    const navigate = useNavigate();
 
-    console.log(post)
+
+    console.log(post.id)
     const { token } = useContext(UserContext);
 
     useEffect(() => {
@@ -43,7 +47,23 @@ function PostInfos({ post }) {
 
     function cancelPlan() {
         console.log("cancelar")
+        // const promise = axios.delete(`http://localhost:5000/feed/${post.id}`, {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     }
+        // });
 
+        const promise = deletePost(token, post.id)
+
+        promise.then((response) => {
+            console.log("deletou : post|id ", post.id)
+            navigate('/');
+        });
+
+        promise.catch((error) => {
+            alert("Algo deu errado, tente novamente mais tarde");
+            console.log(error.response);
+        });
     }
 
 

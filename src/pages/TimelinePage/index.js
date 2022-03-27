@@ -137,6 +137,7 @@ export default function TimelinePage({ title, isHidden }) {
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
                             <h3>Loading...</h3>
+                            <PostBox><PostLoader /></PostBox>
                         </>
                         :
                         timeline.length === 0 ?

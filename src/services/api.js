@@ -13,6 +13,10 @@ async function signup(body) {
 async function login(body) {
   return await axios.post(`${BASE_URL}/login`, body);
 }
+function deletePost(token, id) {
+  const config = createConfig(token);
+  return axios.delete(`${BASE_URL}/feed/${id}`, config);
+}
 
 async function publishPost(body, token) {
   const config = createConfig(token);
@@ -24,4 +28,4 @@ async function getTimeline(token) {
   return await axios.get(`${BASE_URL}/feed`, config);
 }
 
-export { signup, login, publishPost, getTimeline };
+export { signup, login, publishPost, getTimeline, deletePost };
