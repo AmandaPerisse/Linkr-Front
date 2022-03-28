@@ -111,7 +111,7 @@ export default function TimelinePage({ title, isHidden }) {
             <Header />
             <Main>
                 <Feed>
-                    <Title to={"/timeline"}> timeline </Title>
+                    <Title>{title}</Title>
 
                     <ShareBox>
                         <form onSubmit={handlePublishing}>
