@@ -115,7 +115,7 @@ export default function TimelinePage({ title, isHidden }) {
                 <Feed>
                     <Title>{title}</Title>
 
-                    <ShareBox>
+                    <ShareBox isHidden={isHidden}>
                         <form onSubmit={handlePublishing}>
 
                             <SharedBoxQuestion>
