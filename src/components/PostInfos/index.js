@@ -1,11 +1,10 @@
-import axios from 'axios';
 import { useNavigate } from 'react-router';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useRef, useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
 import { TiPencil } from 'react-icons/ti'
 import UserContext from '../../Providers/UserContext';
 import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper, ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost } from './styles';
-import { deletePost, getUser } from '../../services/api';
+import { deletePost, getUser, updatePost } from '../../services/api';
 import { Grid } from 'react-loader-spinner'
 
 function PostInfos({ post }) {
@@ -17,7 +16,7 @@ function PostInfos({ post }) {
     const [isLoading, setIsLoading] = useState(false);
     const [newDescription, setNewDescription] = useState(post.description);
     const [inputLoading, setInputLoading] = useState("");
-
+    const inputRef = useRef();
 
     const { token } = useContext(UserContext);
 
@@ -27,8 +26,10 @@ function PostInfos({ post }) {
             setUserInfos(response.data);
         });
         promise.catch(error => alert("erro#1-Token is not valid", error.response));
+        if (isEditing === true)
+            inputRef.current.focus()
+    }, [token, isEditing])
 
-    }, [token])
 
     function highlightHashtags(description) {
         const descriptionArray = description.split(' ');
@@ -68,7 +69,7 @@ function PostInfos({ post }) {
 
     function handleIsEditing() {
         if (isEditing === false) {
-            setIsEditing(true)
+            setIsEditing(true);
         }
         else {
             setIsEditing(false)
@@ -89,10 +90,24 @@ function PostInfos({ post }) {
         }
     }
     function handleEditPost() {
-        // setInputLoading("disabled");
+        setInputLoading("disabled");
 
-        console.log("editar post com : ", newDescription)
-        console.log(post)
+        const promise = updatePost({
+            description: newDescription,
+            userId: userInfos.id
+        }, post.id)
+
+        promise.then((response) => {
+            setInputLoading("");
+            setIsEditing(false);
+            navigate('/');
+        });
+
+        promise.catch((error) => {
+            alert("Não foi possivel excluir este post ");
+            setInputLoading("");
+        });
+
     }
 
 
@@ -150,6 +165,7 @@ function PostInfos({ post }) {
                     <>
                         {post.user.id === userInfos.id ? (
                             <InputEditingPost
+                                ref={inputRef}
                                 type="text"
                                 value={newDescription}
                                 onKeyDown={(e) => handleKeyDownEditingPost(e)}
