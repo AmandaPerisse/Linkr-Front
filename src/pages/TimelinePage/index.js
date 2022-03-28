@@ -50,7 +50,7 @@ export default function TimelinePage({ title, isHidden }) {
                 
                 promiseTrendingPosts.then(response => {
                     if (response.data) {
-                        /*Colocar o mesmo que os posts da timeline*/
+
                     }
                 });
             }
