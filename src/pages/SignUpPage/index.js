@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
+import { Button, Container, Input, LinkStyled, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/api.js';
@@ -9,7 +9,7 @@ function SignUpPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [userName, setUserName] = useState('');
     const [url, setUrl] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
@@ -20,14 +20,14 @@ function SignUpPage() {
 
         setIsLoading(true);
         setInputLoading("disabled");
-        if (email === "" || password === "" || username === "" || url === "") {
+        if (email === "" || password === "" || userName === "" || url === "") {
             alert("Preencha todos os campos!");
             setIsLoading(false);
             setInputLoading("");
         }
         else {
             const promise = signup({
-                name: username,
+                name: userName,
                 email: email,
                 password: password,
                 pictureUrl: url
@@ -89,8 +89,8 @@ function SignUpPage() {
                         <Input
                             type="username"
                             placeholder="username"
-                            onChange={(e) => setUsername(e.target.value)}
-                            value={username}
+                            onChange={(e) => setUserName(e.target.value)}
+                            value={userName}
                             disabled={inputLoading}
                         />
                         <Input

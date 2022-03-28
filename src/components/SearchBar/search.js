@@ -4,10 +4,8 @@ import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useState } from 'react';
 import {DebounceInput} from 'react-debounce-input';
 import { getAllUsers } from '../../services/api';
-import { IoMdTrash } from 'react-icons/io'
-import { Grid } from 'react-loader-spinner'
-
-
+import { IoMdTrash } from 'react-icons/io';
+import { Grid } from 'react-loader-spinner';
 
 function SearchBar () {
     const navigate = useNavigate();
@@ -49,16 +47,16 @@ function SearchBar () {
     return (
         <div>
             <DebounceInput
-            type="text"
-            minLength={3}
-            debounceTimeout={300}
-            onKeyUp={e => {setQuery(e.target.value); filterUsers()}} 
-            onChange={e => {setQuery(e.target.value); filterUsers()}} 
-            onKeyDown={e => {setQuery(e.target.value); filterUsers()}}
-            placeholder={'Search for people'} />
+                type="text"
+                minLength={3}
+                debounceTimeout={300}
+                onKeyUp={e => {setQuery(e.target.value); filterUsers()}} 
+                onChange={e => {setQuery(e.target.value); filterUsers()}} 
+                onKeyDown={e => {setQuery(e.target.value); filterUsers()}}
+                placeholder={'Search for people'} />
 
             <ul>
-            {filteredUsers.map(value => <h1 onClick={() => navigate(`/user/${value.id}`)} key={value.name}>{value.name}</h1>)}
+                {filteredUsers.map(value => <h1 onClick={() => navigate(`/user/${value.id}`)} key={value.name}>{value.name}</h1>)}
             </ul>
         </div>
     );

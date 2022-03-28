@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import UserContext from '../../Providers/UserContext.js';
+import SearchBar from "../SearchBar/search.js";
 
 export default function Header() {
     const [showLogoutBox, setShowLogoutBox] = useState(false);
@@ -22,6 +23,9 @@ export default function Header() {
     return (
         <HeaderContainer>
             <Link to={"/timeline"}>linkr</Link>
+
+            <SearchBar/>
+            
             <div
                 onMouseEnter={e => setShowLogoutBox(true)}
                 onMouseLeave={e => setShowLogoutBox(false)}

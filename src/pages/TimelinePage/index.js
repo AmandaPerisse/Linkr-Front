@@ -1,18 +1,15 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline } from "../../services/api.js";
-import SearchBar from "../../components/SearchBar/search.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
-
 
 export default function TimelinePage({ title, isHidden }) {
     const { userInfos, token } = useContext(UserContext);
@@ -49,22 +46,16 @@ export default function TimelinePage({ title, isHidden }) {
     useEffect(() => {
         try {
             if (hashtag) {
-                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
-                    /*headers: {
-                        "Authorization": `Bearer ${token}`
-                    }*/
-                });
+                const promiseTrendingPosts = getTrending(hashtag, token);
+                
                 promiseTrendingPosts.then(response => {
                     if (response.data) {
                         /*Colocar o mesmo que os posts da timeline*/
                     }
                 });
             }
-            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
+
+            const promiseTrendings = getTrendingsHashtags(token);
             promiseTrendings.then(response => {
                 if (response.data) {
                     setTrendingList(response.data);
@@ -74,11 +65,14 @@ export default function TimelinePage({ title, isHidden }) {
         catch (e) {
             alert('Falha.');
         }
-    }, [hashtag]);
+        
+    }, [hashtag, token]);
 
     function handlePublishing(e) {
         e.preventDefault();
         setIsPublishing(true);
+        setUrlToPost('');
+        setPostDescription('');
 
         const promise = publishPost(
             {
@@ -99,12 +93,24 @@ export default function TimelinePage({ title, isHidden }) {
         })
     }
 
+    async function handleLikePost(type, postId) {
+        if (type === 'like') {
+            await likePost(postId, token);
+        };
+
+        if (type === 'unlike') {
+            await unlikePost(postId, token);
+        };
+        
+        setTimesFeedUpdated(timesFeedUpdated + 1);
+        return;
+    }
+
 
     return (
         <Container isPublishing={isPublishing}>
             <Header />
             <Main>
-                <SearchBar></SearchBar>
                 <Feed>
                     <Title to={"/timeline"}> timeline </Title>
 
@@ -150,17 +156,19 @@ export default function TimelinePage({ title, isHidden }) {
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
                                         {post.likedByUser ?
                                             <FaHeart
+                                                onClick={() => handleLikePost('unlike', post.id)}
                                                 size={17}
                                                 color={"#AC0000"}
-                                                onMouseEnter={e => {
+                                                onMouseEnter={() => {
                                                     setHoveredPost(timeline.indexOf(post));
                                                 }}
-                                                onMouseLeave={e => {
+                                                onMouseLeave={() => {
                                                     setHoveredPost(null)
                                                 }}
                                             />
                                             :
                                             <FaRegHeart
+                                                onClick={() => handleLikePost('like', post.id)}
                                                 size={17}
                                                 color={"#FFFFFF"}
                                                 onMouseEnter={e => {
@@ -174,7 +182,7 @@ export default function TimelinePage({ title, isHidden }) {
 
                                         <p>{`${post.likesAmount} likes`}</p>
 
-                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                             {post.likedBy}
 
                                             <div />
