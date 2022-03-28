@@ -76,7 +76,6 @@ function PostInfos({ post }) {
             setNewDescription(post.description)
         }
     }
-
     function handleEditionValue(e) {
         setNewDescription(e.target.value)
     }
@@ -90,7 +89,6 @@ function PostInfos({ post }) {
             handleEditPost();
         }
     }
-
     function handleEditPost() {
         setInputLoading("disabled");
 
@@ -109,7 +107,9 @@ function PostInfos({ post }) {
             alert("Não foi possivel excluir este post ");
             setInputLoading("");
         });
+
     }
+
 
     return (
         <>
@@ -148,8 +148,7 @@ function PostInfos({ post }) {
 
 
             <PostContainer>
-                
-                <UsernameWrapper onClick={() => navigate(`/user/${post.user.id}`, { replace: true })}>
+                <UsernameWrapper>
                     <h1>{post.user.name}</h1>
                     <IconsWrapper>
                         {post.user.id === userInfos.id ? (
