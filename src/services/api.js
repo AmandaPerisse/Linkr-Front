@@ -1,8 +1,8 @@
 import axios from "axios";
 
 //const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-//const BASE_URL = "https://top-linkr.herokuapp.com";
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://top-linkr.herokuapp.com";
+//const BASE_URL = "http://localhost:5000";
 
 function createConfig(token) {
   return { headers: { Authorization: `Bearer ${token}` } };
@@ -28,11 +28,6 @@ async function getTimeline(token) {
 
 function updatePost(body, idPost) {
   return axios.put(`${BASE_URL}/feed/${idPost}`, body);
-}
-
-function deletePost(token, idPost) {
-  const config = createConfig(token);
-  return axios.delete(`${BASE_URL}/feed/${idPost}`, config);
 }
 
 async function publishPost(body, token) {
