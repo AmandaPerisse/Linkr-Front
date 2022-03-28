@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router';
+import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
 import UserContext from '../../Providers/UserContext';
@@ -106,13 +107,15 @@ function PostInfos({ post }) {
 
 
             <PostContainer>
-                <UsernameWrapper>
+                
+                <UsernameWrapper onClick={() => navigate(`/user/${post.user.id}`, { replace: true })}>
                     <h1>{post.user.name}</h1>
                     <IconsWrapper>
                         {post.user.id === userInfos.id ?
                             (<IoMdTrash onClick={() => { setIsConfirming(true) }} ></IoMdTrash>) : <></>}
                     </IconsWrapper>
                 </UsernameWrapper>
+                
 
                 <article>
                     <p>{highlightHashtags(post.description)}</p>

@@ -6,6 +6,7 @@ import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
 import { publishPost, getTimeline } from "../../services/api.js";
+import SearchBar from "../../components/SearchBar/search.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
@@ -103,6 +104,7 @@ export default function TimelinePage({ title, isHidden }) {
         <Container isPublishing={isPublishing}>
             <Header />
             <Main>
+                <SearchBar></SearchBar>
                 <Feed>
                     <Title to={"/timeline"}> timeline </Title>
 

@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, getUserPosts } from "../../services/api.js";
+import SearchBar from "../../components/SearchBar/search.js";
+import { publishPost, getTimeline, getUserPosts, getUserId } from "../../services/api.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
@@ -29,6 +30,7 @@ export default function UserPage({ isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [idUser, setIdUser] = useState({});
 
     useEffect(() => {
         setIsLoadingFeed(true);
@@ -45,7 +47,20 @@ export default function UserPage({ isHidden }) {
         });
     }, [id, token, timesFeedUpdated]);
 
-    console.log(userPosts);
+    useEffect(() => {
+        setIsLoadingFeed(true);
+        const promise = getUserId(id);
+
+        promise.then((response) => {
+            setIsLoadingFeed(false);
+            setIdUser([...response.data]);
+        });
+
+        promise.catch((error) => {
+            setIsLoadingFeed(false);
+            alert('An error occured while trying to fetch users information please refresh the page');
+        });
+    }, [id]);
 
     useEffect(() => {
         try {
@@ -105,8 +120,9 @@ export default function UserPage({ isHidden }) {
         <Container isPublishing={isPublishing}>
             <Header />
             <Main>
+            <SearchBar></SearchBar>
                 <Feed>
-                    <Title> {userInfos.userName}'s posts </Title>
+                    <Title> {idUser[0].name}'s posts </Title>
                     
 
                     {isLoadingFeed ?

@@ -39,4 +39,16 @@ async function getUserPosts(id, token) {
   return await axios.get(`${BASE_URL}/user/${id}`, config);
 }
 
-export { signup, login, publishPost, getTimeline, deletePost, getUser, getUserPosts };
+async function searchUsers(body) {
+  return await axios.get(`${BASE_URL}/searchusers`, body);
+}
+
+async function getAllUsers() {
+  return await axios.get(`${BASE_URL}/allusers`);
+}
+
+async function getUserId(id) {
+  return await axios.get(`${BASE_URL}/getuser/${id}`);
+}
+
+export { signup, login, publishPost, getTimeline, deletePost, getUser, getUserPosts, searchUsers, getAllUsers, getUserId };
