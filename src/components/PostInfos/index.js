@@ -2,8 +2,9 @@ import axios from 'axios';
 import { useNavigate } from 'react-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
+import { TiPencil } from 'react-icons/ti'
 import UserContext from '../../Providers/UserContext';
-import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper, ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton } from './styles';
+import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper, ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost } from './styles';
 import { deletePost, getUser } from '../../services/api';
 import { Grid } from 'react-loader-spinner'
 
@@ -11,23 +12,21 @@ function PostInfos({ post }) {
     const navigate = useNavigate();
 
     const [userInfos, setUserInfos] = useState([]);
-    const [isConfirming, setIsConfirming] = useState(false);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [newDescription, setNewDescription] = useState(post.description);
+    const [inputLoading, setInputLoading] = useState("");
 
-    console.log(post.id)
+
     const { token } = useContext(UserContext);
 
     useEffect(() => {
-        // const promise = axios.get(`http://localhost:5000/users`, {
-        //     headers: {
-        //         Authorization: `Bearer ${token}`
-        //     }
-        // });
         const promise = getUser(token)
         promise.then(response => {
             setUserInfos(response.data);
         });
-        promise.catch(error => alert("erro#1-PlansPage: ", error.response));
+        promise.catch(error => alert("erro#1-Token is not valid", error.response));
 
     }, [token])
 
@@ -55,9 +54,8 @@ function PostInfos({ post }) {
             const promise = deletePost(token, post.id)
 
             promise.then((response) => {
-                console.log("deletou : post|id ", post.id)
                 setIsLoading(false);
-                setIsConfirming(false)
+                setIsConfirmingDelete(false)
                 navigate('/');
             });
 
@@ -65,14 +63,42 @@ function PostInfos({ post }) {
                 alert("Não foi possivel excluir este post ");
                 console.log(error.response);
             });
-        }, 5000);
+        }, 3000);
     }
 
+    function handleIsEditing() {
+        if (isEditing === false) {
+            setIsEditing(true)
+        }
+        else {
+            setIsEditing(false)
+            setNewDescription(post.description)
+        }
+    }
+    function handleEditionValue(e) {
+        setNewDescription(e.target.value)
+    }
+
+    function handleKeyDownEditingPost(e) {
+        if (e.keyCode === 27) {
+            setIsEditing(false)
+            setNewDescription(post.description)
+        }
+        if (e.keyCode === 13) {
+            handleEditPost();
+        }
+    }
+    function handleEditPost() {
+        // setInputLoading("disabled");
+
+        console.log("editar post com : ", newDescription)
+        console.log(post)
+    }
 
 
     return (
         <>
-            {isConfirming ?
+            {isConfirmingDelete ?
                 (
                     <ConfirmBox>
                         <ConfirmCard>
@@ -88,7 +114,7 @@ function PostInfos({ post }) {
                                         Are you sure you want to delete this post?
                                     </p>
                                     <CheckAnswer>
-                                        <GoBackButton onClick={() => { setIsConfirming(false) }}> No, go back</GoBackButton>
+                                        <GoBackButton onClick={() => { setIsConfirmingDelete(false) }}> No, go back</GoBackButton>
                                         <ConfirmButton onClick={() => {
                                             setIsLoading(true)
                                             handleDeletePost()
@@ -102,21 +128,44 @@ function PostInfos({ post }) {
 
                     </ConfirmBox>
 
-                ) : ("")}
+                ) : ("")
+            }
 
 
             <PostContainer>
                 <UsernameWrapper>
                     <h1>{post.user.name}</h1>
                     <IconsWrapper>
-                        {post.user.id === userInfos.id ?
-                            (<IoMdTrash onClick={() => { setIsConfirming(true) }} ></IoMdTrash>) : <></>}
+                        {post.user.id === userInfos.id ? (
+                            <>
+                                <TiPencil onClick={() => { handleIsEditing() }} ></TiPencil>
+                                <IoMdTrash onClick={() => { setIsConfirmingDelete(true) }} ></IoMdTrash>
+                            </>
+                        )
+                            : <></>}
+
                     </IconsWrapper>
                 </UsernameWrapper>
+                {isEditing ?
+                    <>
+                        {post.user.id === userInfos.id ? (
+                            <InputEditingPost
+                                type="text"
+                                value={newDescription}
+                                onKeyDown={(e) => handleKeyDownEditingPost(e)}
+                                onChange={(e) => handleEditionValue(e)}
+                                disabled={inputLoading}
+                            ></InputEditingPost>
+                        ) : <></>
+                        }
+                    </>
 
-                <article>
-                    <p>{highlightHashtags(post.description)}</p>
-                </article>
+                    :
+
+                    <article>
+                        <p>{highlightHashtags(post.description)}</p>
+                    </article>
+                }
 
                 <a href={post.url.link} target="_blank" rel="noreferrer">
                     <LinkPreview>
