@@ -149,7 +149,9 @@ function PostInfos({ post }) {
 
             <PostContainer>
                 <UsernameWrapper>
-                    <h1>{post.user.name}</h1>
+                    <h1 onClick={() => navigate(`/user/${post.user.id}`, { replace: true })}>
+                        {post.user.name}
+                    </h1>
                     <IconsWrapper>
                         {post.user.id === userInfos.id ? (
                             <>
