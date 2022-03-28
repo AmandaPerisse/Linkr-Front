@@ -20,12 +20,20 @@ const Container = styled.main`
             pointer-events: none !important;
         `)
     };
+
+    @media(max-width: 700px) {
+        width: 100vw;
+    }
+    
 `;
 const Main = styled.div`
     display: flex;
     justify-content: space-between; 
     margin: 72px 0;
     gap: 20px;
+     @media(max-width: 700px) {
+        width: fit-content;
+    }
 `;
 
 
@@ -46,6 +54,9 @@ const Feed = styled.div`
     }
 
     width: 615px; //Hashtag update
+     @media(max-width: 700px) {
+        width: fit-content;
+    }
 `;
 
 const Title = styled.h1`
@@ -55,6 +66,13 @@ const Title = styled.h1`
     font-weight: 700;
     margin-top: 19px;
     align-self: flex-start;
+
+    @media(max-width: 1280px) {
+        margin-bottom: 18px;
+    }
+    @media(max-width: 700px) {
+       padding-left: 18px ;
+    }
 `;
 
 const ShareBox = styled.div`
@@ -73,6 +91,11 @@ const ShareBox = styled.div`
         flex-direction: column;
         justify-content: space-between;
         gap: 5px;
+    }
+
+     @media(max-width: 700px) {
+        width: 100vw;
+        border-radius: 0px;
     }
 `;
 
@@ -182,6 +205,16 @@ const PostBox = styled.div`
     gap: 14px;
     font-family: Lato;
     font-weight: 400;
+
+    @media(max-width: 1280px) {
+        margin: 30px 0;
+    }
+     @media(max-width: 700px) {
+        width: 100vw;
+        border-radius: 0px;
+        margin: 16px 0;
+
+    }
 `;
 
 const LeftPostContainer = styled.div`

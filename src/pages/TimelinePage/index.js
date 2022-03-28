@@ -100,7 +100,7 @@ export default function TimelinePage({ title, isHidden }) {
         if (type === 'unlike') {
             await unlikePost(postId, token);
         };
-        
+
         setTimesFeedUpdated(timesFeedUpdated + 1);
         return;
     }
