@@ -50,4 +50,14 @@ function unlikePost(id, token) {
   return axios.patch(`${BASE_URL}/unlike/${id}`, null,config);
 }
 
-export { signup, login, getUser, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost };
+async function getTrendingsHashtags(token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/hashtag`, config);
+}
+
+async function getTrending(hashtagId, token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/hashtag/${hashtagId}`, config);
+}
+
+export { signup, login, getUser, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending };

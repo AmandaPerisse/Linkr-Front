@@ -1,11 +1,10 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
@@ -47,22 +46,16 @@ export default function TimelinePage({ title, isHidden }) {
     useEffect(() => {
         try {
             if (hashtag) {
-                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
-                    /*headers: {
-                        "Authorization": `Bearer ${token}`
-                    }*/
-                });
+                const promiseTrendingPosts = getTrending(hashtag, token);
+                
                 promiseTrendingPosts.then(response => {
                     if (response.data) {
                         /*Colocar o mesmo que os posts da timeline*/
                     }
                 });
             }
-            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
+
+            const promiseTrendings = getTrendingsHashtags(token);
             promiseTrendings.then(response => {
                 if (response.data) {
                     setTrendingList(response.data);
@@ -72,7 +65,8 @@ export default function TimelinePage({ title, isHidden }) {
         catch (e) {
             alert('Falha.');
         }
-    }, [hashtag]);
+        
+    }, [hashtag, token]);
 
     function handlePublishing(e) {
         e.preventDefault();
