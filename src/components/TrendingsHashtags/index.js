@@ -11,7 +11,7 @@ function TrendingsHashtags({ trendingList }) {
                 const name = hashtag.name;
                 return (
                     <HashtagName key={id}>
-                        <a href={`/hashtags/${name}`}># {name}</a>
+                        <a href={`/hashtag/${name}`}># {name}</a>
 
                     </HashtagName>
                 )
