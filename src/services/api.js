@@ -34,4 +34,9 @@ async function getTimeline(token) {
   return await axios.get(`${BASE_URL}/feed`, config);
 }
 
-export { signup, login, publishPost, getTimeline, deletePost, getUser };
+async function getUserPosts(id, token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/user/${id}`, config);
+}
+
+export { signup, login, publishPost, getTimeline, deletePost, getUser, getUserPosts };
