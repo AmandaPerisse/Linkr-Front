@@ -26,7 +26,9 @@ function PostInfos({ post }) {
         promise.then(response => {
             setUserInfos(response.data);
         });
-        promise.catch(error => alert("erro#1-Token is not valid", error.response));
+        promise.catch(error => {
+            console.error(error);
+            alert("erro#1-Token is not valid", error.response)});
         if (isEditing === true)
             inputRef.current.focus()
     }, [token, isEditing])
