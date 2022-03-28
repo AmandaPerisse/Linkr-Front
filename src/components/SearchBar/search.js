@@ -1,7 +1,14 @@
+import axios from 'axios';
 import { useNavigate } from 'react-router';
-import React, { useEffect, useState } from 'react';
+import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from 'react';
 import {DebounceInput} from 'react-debounce-input';
+import { CustomInput, SearchNode, CustomUl, UserPfp, CustomSpan,SearchIcon, InputWraper } from './styles.js';
 import { getAllUsers } from '../../services/api';
+import { IoMdSearch } from 'react-icons/io'
+import { Grid } from 'react-loader-spinner'
+
+
 
 function SearchBar () {
     const navigate = useNavigate();
@@ -39,20 +46,34 @@ function SearchBar () {
 
     });
 
+
     return (
         <div>
-            <DebounceInput
-                type="text"
-                minLength={3}
-                debounceTimeout={300}
-                onKeyUp={e => {setQuery(e.target.value); filterUsers()}} 
-                onChange={e => {setQuery(e.target.value); filterUsers()}} 
-                onKeyDown={e => {setQuery(e.target.value); filterUsers()}}
-                placeholder={'Search for people'} />
+            <InputWraper>
+            <CustomInput
+            type="text"
+            minLength={3}
+            debounceTimeout={300}
+            onKeyUp={e => {setQuery(e.target.value); filterUsers()}} 
+            onChange={e => {setQuery(e.target.value); filterUsers()}} 
+            onKeyDown={e => {setQuery(e.target.value); filterUsers()}}
+            placeholder={'Search for people'}>
+            </CustomInput>
 
-            <ul>
-                {filteredUsers.map(value => <h1 onClick={() => navigate(`/user/${value.id}`)} key={value.name}>{value.name}</h1>)}
-            </ul>
+            <SearchIcon>
+                <IoMdSearch/>
+            </SearchIcon>
+            </InputWraper>
+
+            <CustomUl>
+            {filteredUsers.map(value => 
+            <SearchNode onClick={() => navigate(`/user/${value.id}`)} key={value.name}>
+                <UserPfp src={`${value.img}`}/>
+                <CustomSpan>
+                    {value.name}
+                </CustomSpan>
+            </SearchNode>)}
+            </CustomUl>
         </div>
     );
 
