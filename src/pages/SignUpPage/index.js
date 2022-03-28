@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Container, Input, LinkStyled, LogoCard, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
+import { Button, Container, Input, LinkStyled, LogoWrapper, SignUpCard, SignUpWrapper, Subtitle, Title } from '../../styles/formUser';
 import { motion } from "framer-motion"
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/api.js';
