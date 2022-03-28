@@ -29,43 +29,45 @@ export default function TimelinePage({ title, isHidden }) {
 
     useEffect(() => {
         setIsLoadingFeed(true);
-        const promise = getTimeline(token);
+        if (hashtag) {
+            const promise = getTrending(hashtag, token);
+            
+            promise.then((response) => {
+                setIsLoadingFeed(false);
+                setTimeline([...response.data]);
+            });
+    
+            promise.catch((error) => {
+                alert('An error occured while trying to fetch the posts, please refresh the page');
+                setIsLoadingFeed(false);
+            });
+        }
+        else{
+            const promise = getTimeline(token);
 
-        promise.then((response) => {
-            setIsLoadingFeed(false);
-            setTimeline([...response.data]);
+            promise.then((response) => {
+                setIsLoadingFeed(false);
+                setTimeline([...response.data]);
+            });
+
+            promise.catch((error) => {
+                alert('An error occured while trying to fetch the posts, please refresh the page');
+                setIsLoadingFeed(false);
+            });
+        }
+
+        const promiseTrendings = getTrendingsHashtags(token);
+
+        promiseTrendings.then(response => {
+            if (response.data) {
+                setTrendingList(response.data);
+            }
         });
-
-        promise.catch((error) => {
-            alert('An error occured while trying to fetch the posts, please refresh the page');
+        promiseTrendings.catch((error) => {
+            alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
     }, [token, timesFeedUpdated]);
-
-    useEffect(() => {
-        try {
-            if (hashtag) {
-                const promiseTrendingPosts = getTrending(hashtag, token);
-                
-                promiseTrendingPosts.then(response => {
-                    if (response.data) {
-                        /*Colocar o mesmo que os posts da timeline*/
-                    }
-                });
-            }
-
-            const promiseTrendings = getTrendingsHashtags(token);
-            promiseTrendings.then(response => {
-                if (response.data) {
-                    setTrendingList(response.data);
-                }
-            });
-        }
-        catch (e) {
-            alert('Falha.');
-        }
-        
-    }, [hashtag, token]);
 
     function handlePublishing(e) {
         e.preventDefault();
