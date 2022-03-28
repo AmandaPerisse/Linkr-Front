@@ -19,9 +19,14 @@ function getUser(token) {
   const config = createConfig(token);
   return axios.get(`${BASE_URL}/users`, config);
 }
-function deletePost(token, id) {
+
+function updatePost(body, idPost) {
+  return axios.put(`${BASE_URL}/feed/${idPost}`, body);
+}
+
+function deletePost(token, idPost) {
   const config = createConfig(token);
-  return axios.delete(`${BASE_URL}/feed/${id}`, config);
+  return axios.delete(`${BASE_URL}/feed/${idPost}`, config);
 }
 
 async function publishPost(body, token) {
@@ -34,4 +39,4 @@ async function getTimeline(token) {
   return await axios.get(`${BASE_URL}/feed`, config);
 }
 
-export { signup, login, publishPost, getTimeline, deletePost, getUser };
+export { signup, login, publishPost, getTimeline, deletePost, getUser, updatePost };

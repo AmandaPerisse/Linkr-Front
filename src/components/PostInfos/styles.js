@@ -58,6 +58,7 @@ const IconsWrapper = styled.div`
     align-items:center;
     justify-content: space-between;
     min-height: 30px;
+    gap: 8px;
     cursor: pointer;
     svg{
         color: #fff;
@@ -272,9 +273,42 @@ const ConfirmButton = styled.button`
 
 
 `;
+const InputEditingPost = styled.input`
+    all:unset;
+    outline: none;
+    border: none;
+    text-indent: 17px;  
+    margin-bottom :13px ;
+    border-radius: 6px;
+    
+    width: 100%;
+    height: 44px;
+    
+    font-size:14px;
+    
+    color: #4C4C4C;
+    background-color: #FFFFFF;
 
+    :focus{
+        filter: brightness(95%);
+    }
+
+    ::placeholder {
+        color: #4C4C4C;
+        font-family: var(--font-family);
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 17px;
+        
+    }
+    @media(max-width: 900px) {
+    height: 55px;
+
+    }
+
+`
 
 export {
     PostContainer, UsernameWrapper, LinkPreview, LinkData, LinkImage, IconsWrapper,
-    ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton
+    ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost
 }
