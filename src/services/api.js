@@ -26,6 +26,15 @@ async function getTimeline(token) {
   return await axios.get(`${BASE_URL}/feed`, config);
 }
 
+function updatePost(body, idPost) {
+  return axios.put(`${BASE_URL}/feed/${idPost}`, body);
+}
+
+function deletePost(token, idPost) {
+  const config = createConfig(token);
+  return axios.delete(`${BASE_URL}/feed/${idPost}`, config);
+}
+
 async function publishPost(body, token) {
   const config = createConfig(token);
   return await axios.post(`${BASE_URL}/feed`, body, config);
@@ -46,4 +55,4 @@ function unlikePost(id, token) {
   return axios.patch(`${BASE_URL}/unlike/${id}`, null,config);
 }
 
-export { signup, login, getUser, getTimeline, publishPost, deletePost, likePost, unlikePost };
+export { signup, login, getUser, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost };
