@@ -9,12 +9,18 @@ const TrendingSubTitle = styled.div`
     height: 55px;
     display: flex;
     align-items: center;
+     @media(max-width: 900px) {
+         display: none;
+    }
 `;
 
 const SubTitle = styled.h2`
     font-size: 27px;
     color: #FFF;
     font-family: Oswald;
+     @media(max-width: 900px) {
+         display: none;
+    }
 `;
 
 const TrendingHashtags = styled.div`
@@ -27,6 +33,9 @@ const TrendingHashtags = styled.div`
     justify-content: center;
     flex-direction: column;
     gap: 10px;
+     @media(max-width: 900px) {
+         display: none;
+    }
 `;
 const HashtagName = styled.h3`
     font-size: 19px;
@@ -34,6 +43,9 @@ const HashtagName = styled.h3`
     font-family: Oswald;
     a{
         color: white;
+    }
+     @media(max-width: 900px) {
+         display: none;
     }
 `;
 

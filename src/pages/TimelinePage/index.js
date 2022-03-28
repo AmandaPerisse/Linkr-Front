@@ -101,7 +101,7 @@ export default function TimelinePage({ title, isHidden }) {
         if (type === 'unlike') {
             await unlikePost(postId, token);
         };
-        
+
         setTimesFeedUpdated(timesFeedUpdated + 1);
         return;
     }
@@ -157,7 +157,7 @@ export default function TimelinePage({ title, isHidden }) {
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
                                         {post.likedByUser ?
                                             <FaHeart
-                                                onClick={() => handleLikePost('unlike', post.id)}                                                size={17}
+                                                onClick={() => handleLikePost('unlike', post.id)} size={17}
                                                 color={"#AC0000"}
                                                 onMouseEnter={() => {
                                                     setHoveredPost(timeline.indexOf(post));
