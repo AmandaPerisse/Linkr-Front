@@ -11,7 +11,6 @@ export default function Header() {
     const { userInfos, setUserInfos, setToken } = useContext(UserContext);
     const navigate = useNavigate();
 
-
     function handleLogout() {
         setUserInfos(null)
         setToken(null)
@@ -44,7 +43,7 @@ export default function Header() {
                     />
                 }
 
-                <img src={userInfos.pictureUrl} />
+                <img src={userInfos.pictureUrl} alt={userInfos.userName}/>
                 {showLogoutBox &&
                     <LogoutBox
                         onClick={e => handleLogout()}

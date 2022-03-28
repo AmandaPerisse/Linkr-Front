@@ -1,28 +1,24 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
+import { useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import SearchBar from "../../components/SearchBar/search.js";
-import { publishPost, getTimeline, getUserPosts, getUserId } from "../../services/api.js";
-import PostLoader from "../../components/Loader/contentLoader.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 
+export default function TimelinePage({ title, isHidden }) {
+    const { token } = useContext(UserContext);
 
-export default function UserPage({ isHidden }) {
-    const { userInfos, token } = useContext(UserContext);
-
-    const { id } = useParams();
-
-    const hashtag = "";
+    const { hashtag } = useParams();
+    if (!title) {
+        title = `# ${hashtag}`;
+    }
 
     const [timeline, setTimeline] = useState([]);
-    const [userPosts, setUserPosts] = useState([]);
     const [urlToPost, setUrlToPost] = useState("")
     const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
@@ -30,11 +26,10 @@ export default function UserPage({ isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
-    const [idUser, setIdUser] = useState({});
 
     useEffect(() => {
         setIsLoadingFeed(true);
-        const promise = getUserPosts(id, token);
+        const promise = getTimeline(token);
 
         promise.then((response) => {
             setIsLoadingFeed(false);
@@ -45,42 +40,21 @@ export default function UserPage({ isHidden }) {
             alert('An error occured while trying to fetch the posts, please refresh the page');
             setIsLoadingFeed(false);
         });
-    }, [id, token, timesFeedUpdated]);
-
-    useEffect(() => {
-        setIsLoadingFeed(true);
-        const promise = getUserId(id);
-
-        promise.then((response) => {
-            setIsLoadingFeed(false);
-            setIdUser([...response.data]);
-        });
-
-        promise.catch((error) => {
-            setIsLoadingFeed(false);
-            alert('An error occured while trying to fetch users information please refresh the page');
-        });
-    }, [id]);
+    }, [token, timesFeedUpdated]);
 
     useEffect(() => {
         try {
             if (hashtag) {
-                const promiseTrendingPosts = axios.get(`https://top-linkr.herokuapp.com/hashtag/${hashtag}`, {
-                    /*headers: {
-                        "Authorization": `Bearer ${token}`
-                    }*/
-                });
+                const promiseTrendingPosts = getTrending(hashtag, token);
+                
                 promiseTrendingPosts.then(response => {
                     if (response.data) {
                         /*Colocar o mesmo que os posts da timeline*/
                     }
                 });
             }
-            const promiseTrendings = axios.get('https://top-linkr.herokuapp.com/hashtag', {
-                /*headers: {
-                    "Authorization": `Bearer ${token}`
-                }*/
-            });
+
+            const promiseTrendings = getTrendingsHashtags(token);
             promiseTrendings.then(response => {
                 if (response.data) {
                     setTrendingList(response.data);
@@ -90,11 +64,14 @@ export default function UserPage({ isHidden }) {
         catch (e) {
             alert('Falha.');
         }
-    }, [hashtag]);
+        
+    }, [hashtag, token]);
 
     function handlePublishing(e) {
         e.preventDefault();
         setIsPublishing(true);
+        setUrlToPost('');
+        setPostDescription('');
 
         const promise = publishPost(
             {
@@ -115,15 +92,53 @@ export default function UserPage({ isHidden }) {
         })
     }
 
+    async function handleLikePost(type, postId) {
+        if (type === 'like') {
+            await likePost(postId, token);
+        };
+
+        if (type === 'unlike') {
+            await unlikePost(postId, token);
+        };
+        
+        setTimesFeedUpdated(timesFeedUpdated + 1);
+        return;
+    }
+
 
     return (
         <Container isPublishing={isPublishing}>
             <Header />
             <Main>
-            <SearchBar></SearchBar>
                 <Feed>
-                    <Title> {idUser[0].name}'s posts </Title>
-                    
+                    <Title to={"/timeline"}> timeline </Title>
+
+                    <ShareBox>
+                        <form onSubmit={handlePublishing}>
+
+                            <SharedBoxQuestion>
+                                What are you going to share today?
+                            </SharedBoxQuestion>
+
+                            <LinkInput
+                                placeholder="http:/..."
+                                type="url"
+                                onChange={(e) => setUrlToPost(e.target.value)}
+                                value={urlToPost}
+                                required
+                            />
+
+                            <DescriptionInput
+                                placeholder="Awesome article about #javascript"
+                                onChange={(e) => setPostDescription(e.target.value)}
+                                value={postDescription}
+                            />
+
+                            <PublishButton isPublishing={isPublishing}>
+                                {isPublishing ? 'Publishing...' : 'Publish'}
+                            </PublishButton>
+                        </form>
+                    </ShareBox>
 
                     {isLoadingFeed ?
                         <>
@@ -140,17 +155,19 @@ export default function UserPage({ isHidden }) {
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
                                         {post.likedByUser ?
                                             <FaHeart
+                                                onClick={() => handleLikePost('unlike', post.id)}
                                                 size={17}
                                                 color={"#AC0000"}
-                                                onMouseEnter={e => {
+                                                onMouseEnter={() => {
                                                     setHoveredPost(timeline.indexOf(post));
                                                 }}
-                                                onMouseLeave={e => {
+                                                onMouseLeave={() => {
                                                     setHoveredPost(null)
                                                 }}
                                             />
                                             :
                                             <FaRegHeart
+                                                onClick={() => handleLikePost('like', post.id)}
                                                 size={17}
                                                 color={"#FFFFFF"}
                                                 onMouseEnter={e => {
@@ -164,7 +181,7 @@ export default function UserPage({ isHidden }) {
 
                                         <p>{`${post.likesAmount} likes`}</p>
 
-                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                             {post.likedBy}
 
                                             <div />

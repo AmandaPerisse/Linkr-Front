@@ -1,11 +1,7 @@
-import axios from 'axios';
 import { useNavigate } from 'react-router';
-import { Link } from "react-router-dom";
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {DebounceInput} from 'react-debounce-input';
 import { getAllUsers } from '../../services/api';
-import { IoMdTrash } from 'react-icons/io';
-import { Grid } from 'react-loader-spinner';
 
 function SearchBar () {
     const navigate = useNavigate();
@@ -42,7 +38,6 @@ function SearchBar () {
         }
 
     });
-
 
     return (
         <div>
