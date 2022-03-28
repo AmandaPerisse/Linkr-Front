@@ -5,13 +5,12 @@ import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost } from "../../services/api.js";
 import PostLoader from "../../components/Loader/contentLoader.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
-
 
 export default function TimelinePage({ title, isHidden }) {
     const { token } = useContext(UserContext);
@@ -78,6 +77,8 @@ export default function TimelinePage({ title, isHidden }) {
     function handlePublishing(e) {
         e.preventDefault();
         setIsPublishing(true);
+        setUrlToPost('');
+        setPostDescription('');
 
         const promise = publishPost(
             {
@@ -96,6 +97,19 @@ export default function TimelinePage({ title, isHidden }) {
             console.log(error.response.status)
             setIsPublishing(false);
         })
+    }
+
+    async function handleLikePost(type, postId) {
+        if (type === 'like') {
+            await likePost(postId, token);
+        };
+
+        if (type === 'unlike') {
+            await unlikePost(postId, token);
+        };
+        
+        setTimesFeedUpdated(timesFeedUpdated + 1);
+        return;
     }
 
 
@@ -149,17 +163,18 @@ export default function TimelinePage({ title, isHidden }) {
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
                                         {post.likedByUser ?
                                             <FaHeart
-                                                size={17}
+                                                onClick={() => handleLikePost('unlike', post.id)}                                                size={17}
                                                 color={"#AC0000"}
-                                                onMouseEnter={e => {
+                                                onMouseEnter={() => {
                                                     setHoveredPost(timeline.indexOf(post));
                                                 }}
-                                                onMouseLeave={e => {
+                                                onMouseLeave={() => {
                                                     setHoveredPost(null)
                                                 }}
                                             />
                                             :
                                             <FaRegHeart
+                                                onClick={() => handleLikePost('like', post.id)}
                                                 size={17}
                                                 color={"#FFFFFF"}
                                                 onMouseEnter={e => {
@@ -173,7 +188,7 @@ export default function TimelinePage({ title, isHidden }) {
 
                                         <p>{`${post.likesAmount} likes`}</p>
 
-                                        <LikedBy style={hoveredPost === timeline.indexOf(post) ? { display: 'block' } : { display: 'none' }} >
+                                        <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                             {post.likedBy}
 
                                             <div />

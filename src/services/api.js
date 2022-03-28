@@ -1,6 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = "https://top-linkr.herokuapp.com";
+//const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+//const BASE_URL = "https://top-linkr.herokuapp.com";
 const BASE_URL = "http://localhost:5000";
 
 function createConfig(token) {
@@ -20,6 +21,11 @@ function getUser(token) {
   return axios.get(`${BASE_URL}/users`, config);
 }
 
+async function getTimeline(token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/feed`, config);
+}
+
 function updatePost(body, idPost) {
   return axios.put(`${BASE_URL}/feed/${idPost}`, body);
 }
@@ -34,9 +40,19 @@ async function publishPost(body, token) {
   return await axios.post(`${BASE_URL}/feed`, body, config);
 }
 
-async function getTimeline(token) {
+function deletePost(token, id) {
   const config = createConfig(token);
-  return await axios.get(`${BASE_URL}/feed`, config);
+  return axios.delete(`${BASE_URL}/feed/${id}`, config);
 }
 
-export { signup, login, publishPost, getTimeline, deletePost, getUser, updatePost };
+function likePost(id, token) {
+  const config = createConfig(token);
+  return axios.patch(`${BASE_URL}/like/${id}`, null,config);
+}
+
+function unlikePost(id, token) {
+  const config = createConfig(token);
+  return axios.patch(`${BASE_URL}/unlike/${id}`, null,config);
+}
+
+export { signup, login, getUser, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost };

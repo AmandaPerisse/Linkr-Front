@@ -76,6 +76,7 @@ function PostInfos({ post }) {
             setNewDescription(post.description)
         }
     }
+
     function handleEditionValue(e) {
         setNewDescription(e.target.value)
     }
@@ -89,6 +90,7 @@ function PostInfos({ post }) {
             handleEditPost();
         }
     }
+
     function handleEditPost() {
         setInputLoading("disabled");
 
@@ -107,9 +109,7 @@ function PostInfos({ post }) {
             alert("Não foi possivel excluir este post ");
             setInputLoading("");
         });
-
     }
-
 
     return (
         <>
