@@ -55,9 +55,9 @@ async function getTrendingsHashtags(token) {
   return await axios.get(`${BASE_URL}/hashtag`, config);
 }
 
-async function getTrending(hashtagId, token) {
+async function getTrending(hashtag, token) {
   const config = createConfig(token);
-  return await axios.get(`${BASE_URL}/hashtag/${hashtagId}`, config);
+  return await axios.get(`${BASE_URL}/hashtag/${hashtag}`, config);
 }
 
 async function getUserPosts(id, token) {

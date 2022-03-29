@@ -23,7 +23,7 @@ function App() {
           <Route path="/" element={<LoginPage />}></Route>
           <Route path="/sign-up" element={<SignUpPage />}></Route>
           <Route path="/timeline" element={<TimelinePage title = "timeline" isHidden = "block"/>}></Route>
-          <Route path="/hashtags/:hashtag" element={<TimelinePage title = "" isHidden = "none"/>}></Route>
+          <Route path="/hashtag/:hashtag" element={<TimelinePage title = "" isHidden = "none"/>}></Route>
           <Route path="/user/:id" element={<UserPage isHidden = "none"/>}></Route>
         </Routes>
       </BrowserRouter>
