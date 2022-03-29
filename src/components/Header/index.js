@@ -18,10 +18,13 @@ export default function Header() {
         localStorage.removeItem('userInfos');
         navigate("/");
     }
+    function handleClick(){
+        navigate("/");
+    }
 
     return (
         <HeaderContainer>
-            <Link to={"/timeline"}>linkr</Link>
+            <Logo onClick={handleClick}>linkr</Logo>
 
             <SearchBar/>
             
@@ -121,4 +124,16 @@ const LogoutBox = styled.div`
     :hover{
         filter: brightness(95%);
     }
+`;
+
+const Logo = styled.button`
+    font-family: Passion One;
+    font-size: 45px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: left;
+    color: #FFFFFF;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
 `;
