@@ -44,7 +44,6 @@ const Feed = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
 
     h3 {
         font-family: Lato;
@@ -76,6 +75,7 @@ const Title = styled.h1`
 `;
 
 const ShareBox = styled.div`
+
     border-radius: 16px;
     width: 100%;
     height: 164px;
@@ -83,6 +83,7 @@ const ShareBox = styled.div`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
     display: ${props => props.isHidden};
+    margin-top: 15px ;
 
     form {
         width: 100%;
@@ -198,14 +199,14 @@ const PostBox = styled.div`
     max-height: 340px;
     background-color: #171717;
     padding: 15px;
-
+    margin-top:15px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     gap: 14px;
     font-family: Lato;
     font-weight: 400;
-
+    z-index: 1;
     @media(max-width: 1280px) {
         margin: 30px 0;
     }
@@ -229,7 +230,6 @@ const LeftPostContainer = styled.div`
         border-radius: 50%;
         background-color: #FFFFFF;
         object-fit: cover;
-        margin-bottom: 17px;
         cursor: pointer;
     }
 
@@ -237,19 +237,21 @@ const LeftPostContainer = styled.div`
         font-size: 9px;
         text-align: center;
         color: #FFFFFF;
-        margin: 12px 0;
+        margin-top: 4px;
+        max-width: 70px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     svg {
         cursor: pointer;
+        width: 19px;
+        height: 18px;
+        color: #FFFFFF;
+        margin-top:15px ;
     }
 `;
-
-
-
-
-
-
 
 
 const LikedBy = styled.div`

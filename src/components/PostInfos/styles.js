@@ -9,7 +9,6 @@ const PostContainer = styled.div`
     align-items: flex-start;
     justify-content: space-between;
     gap: 10px;
-
     article {
         width: 100%;
         height: auto;
@@ -147,7 +146,6 @@ const LinkImage = styled.div`
 const ConfirmBox = styled.div`
     background-color: rgba(255, 255, 255, 0.6);
     position: absolute;
-    z-index: 2;
     min-width:100%;
     min-height:100%;
     top: 0;
@@ -155,6 +153,7 @@ const ConfirmBox = styled.div`
     display: flex;
     align-items: 50%;
     justify-content: center;
+    z-index: 5;
 `
 const ConfirmCard = styled.div`
     position: fixed;
@@ -170,7 +169,7 @@ const ConfirmCard = styled.div`
     justify-content: center;
     background: #333333;
     border-radius: 50px;
-    z-index: 2;
+    z-index: 5;
     p{
         margin: 8px 0;
         width: 370px;
@@ -310,5 +309,5 @@ const InputEditingPost = styled.input`
 
 export {
     PostContainer, UsernameWrapper, LinkPreview, LinkData, LinkImage, IconsWrapper,
-    ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost
+    ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost,
 }
