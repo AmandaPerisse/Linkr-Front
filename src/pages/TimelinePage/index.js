@@ -34,10 +34,13 @@ export default function TimelinePage({ title, isHidden }) {
             const promise = getTrending(hashtag, token);
             
             promise.then((response) => {
-                setIsLoadingFeed(false);
                 setTimeline([...response.data]);
+                const postsUserLiked =[];
+                response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
+                setLikedByUserPosts(postsUserLiked);
+                setIsLoadingFeed(false);
             });
-    
+            
             promise.catch((error) => {
                 alert('An error occured while trying to fetch the posts, please refresh the page');
                 setIsLoadingFeed(false);
@@ -45,10 +48,14 @@ export default function TimelinePage({ title, isHidden }) {
         }
         else{
             const promise = getTimeline(token);
-
+            console.log('sem hashtag');
+            
             promise.then((response) => {
+                setTimeline([...response.data]);                
+                const postsUserLiked =[];
+                response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
+                setLikedByUserPosts(postsUserLiked);
                 setIsLoadingFeed(false);
-                setTimeline([...response.data]);
             });
 
             promise.catch((error) => {
@@ -64,10 +71,12 @@ export default function TimelinePage({ title, isHidden }) {
                 setTrendingList(response.data);
             }
         });
+
         promiseTrendings.catch((error) => {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
+        
     }, [token, timesFeedUpdated]);
 
     function handlePublishing(e) {
@@ -93,13 +102,14 @@ export default function TimelinePage({ title, isHidden }) {
     async function handleLikePost(type, postId) {
         if (type === 'like') {
             await likePost(postId, token);
+            setLikedByUserPosts(...likedByUserPosts.push(postId));
         };
-
+        
         if (type === 'unlike') {
             await unlikePost(postId, token);
+            setLikedByUserPosts(likedByUserPosts.filter(id => id !== postId));
         };
 
-        setTimesFeedUpdated(timesFeedUpdated + 1);
         return;
     }
 
@@ -151,7 +161,7 @@ export default function TimelinePage({ title, isHidden }) {
                                 <PostBox>
                                     <LeftPostContainer>
                                         <img src={post.user.pictureUrl} alt={post.user.name} />
-                                        {post.likedByUser ?
+                                        {likedByUserPosts.includes(post.id) ?
                                             <FaHeart
                                                 onClick={() => handleLikePost('unlike', post.id)}
                                                 size={17}
