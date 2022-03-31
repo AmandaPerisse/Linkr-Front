@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion"
-
+import { FiSend } from 'react-icons/fi';
 import {
     CommentsWrapper, CommentBox, CommentImg, CommentUserInfos,
     CommentBody, KinshipBox, Dot, KinshipInfo, Username, HorizontalBar, InputWrapper, UserImg, Input
 } from './styles';
 
-function CommentsInfos({ isShowingComments }) {
-
+function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
+    console.log(post)
     return (
         <CommentsWrapper>
             <AnimatePresence>
-                {isShowingComments && (
+                {isShowingComments === true && showingCommentsPostId === post.id ? (
+
                     <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                         transition={{
                             type: 'spring',
@@ -75,10 +76,11 @@ function CommentsInfos({ isShowingComments }) {
                         <InputWrapper>
                             <UserImg src="https://i.imgur.com/rEof5QC.png" alt="img user" />
                             <Input type="text" placeholder="write a comment..." />
+                            <FiSend />
                         </InputWrapper>
 
                     </motion.p>
-                )}
+                ) : ("")}
             </AnimatePresence>
         </CommentsWrapper >
 

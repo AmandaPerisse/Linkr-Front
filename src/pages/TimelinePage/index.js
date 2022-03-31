@@ -30,7 +30,9 @@ export default function TimelinePage({ title, isHidden }) {
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
-    const [isShowingComments, setIsShowingComments] = useState(true);
+    const [isShowingComments, setIsShowingComments] = useState(false);
+    const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
+
 
 
     useEffect(() => {
@@ -113,11 +115,14 @@ export default function TimelinePage({ title, isHidden }) {
         return;
     }
 
-    function handleIsShowingComments() {
-        if (isShowingComments == false)
+    function handleIsShowingComments(postId) {
+        if (isShowingComments == false) {
             setIsShowingComments(true)
+            setShowingCommentsPostId(postId)
+        }
         else {
             setIsShowingComments(false)
+            setShowingCommentsPostId(null)
         }
     }
 
@@ -198,7 +203,7 @@ export default function TimelinePage({ title, isHidden }) {
 
                                             <p>{`${post.likesAmount} likes`}</p>
 
-                                            <AiOutlineComment onClick={() => handleIsShowingComments()} />
+                                            <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
                                             <p>{` 23 Comments`}</p>
 
                                             <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
@@ -211,7 +216,11 @@ export default function TimelinePage({ title, isHidden }) {
                                         <PostInfos post={post} />
 
                                     </PostBox>
-                                    <CommentsInfos isShowingComments={isShowingComments} />
+                                    <CommentsInfos
+                                        isShowingComments={isShowingComments}
+                                        showingCommentsPostId={showingCommentsPostId}
+                                        post={post}
+                                    />
                                 </>
                             )}
 

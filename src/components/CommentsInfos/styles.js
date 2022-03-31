@@ -84,6 +84,20 @@ const CommentBody = styled.div`
 `
 const InputWrapper = styled.div`
     display:flex;
+    svg{
+        position: absolute;
+        bottom: 16px;
+        right: 40px ;
+        height: 30px;
+        width: 22px;
+        color: #F3F3F3;
+        cursor: pointer;
+        :hover{
+            color: var(--button-color);
+            filter: brightness(70%);
+        }
+
+    }
 `
 const UserImg = styled.img`
     height:39px;
