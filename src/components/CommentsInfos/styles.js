@@ -7,26 +7,19 @@ const CommentsWrapper = styled.div`
         z-index: 0;
         position: relative;
         padding: 0 25px;
-        top: -3rem;
-        padding-top:  3rem; 
+        padding-top:  12px; 
         border-radius: 0px 0px  16px 16px;
     }
-    @media(max-width: 1280px){
-        padding-top:  1rem;
-    }
-    @media(max-width: 700px){
-        border-radius: 1px ;
-        width: 100vw;
-        padding: 0 15px;
-        padding-top:  2rem;
 
+    @media(max-width: 700px){
+        border-radius: 0px ;
+        width: 100vw;
     }
    
 `
 const CommentBox = styled.div`
     span{
         display:flex ;
-        margin-top:13px;
     }
 `
 const CommentImg = styled.img`
@@ -95,6 +88,12 @@ const InputWrapper = styled.div`
         :hover{
             color: var(--button-color);
             filter: brightness(70%);
+        }
+        ::placeholder {
+            color: #F3F3F3;
+            font-family: var(--font-subtitle);
+            font-weight: 700;
+            font-size: 22px;
         }
 
     }

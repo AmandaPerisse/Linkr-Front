@@ -8,7 +8,7 @@ import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
 import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
 import "../../styles/reset.css";
-import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
+import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, PostWrapper } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 import CommentsInfos from "../../components/CommentsInfos/index.js";
@@ -172,55 +172,57 @@ export default function TimelinePage({ title, isHidden }) {
                             :
                             timeline.map(post =>
                                 <>
-                                    <PostBox>
-                                        <LeftPostContainer>
-                                            <img src={post.user.pictureUrl} alt={post.user.name} />
-                                            {post.likedByUser ?
-                                                <FaHeart
-                                                    onClick={() => handleLikePost('unlike', post.id)}
-                                                    size={17}
-                                                    color={"#AC0000"}
-                                                    onMouseEnter={() => {
-                                                        setHoveredPost(timeline.indexOf(post));
-                                                    }}
-                                                    onMouseLeave={() => {
-                                                        setHoveredPost(null)
-                                                    }}
-                                                />
-                                                :
-                                                <FaRegHeart
-                                                    onClick={() => handleLikePost('like', post.id)}
-                                                    size={17}
-                                                    color={"#FFFFFF"}
-                                                    onMouseEnter={e => {
-                                                        setHoveredPost(timeline.indexOf(post));
-                                                    }}
-                                                    onMouseLeave={e => {
-                                                        setHoveredPost(null)
-                                                    }}
-                                                />
-                                            }
+                                    <PostWrapper>
+                                        <PostBox>
+                                            <LeftPostContainer>
+                                                <img src={post.user.pictureUrl} alt={post.user.name} />
+                                                {post.likedByUser ?
+                                                    <FaHeart
+                                                        onClick={() => handleLikePost('unlike', post.id)}
+                                                        size={17}
+                                                        color={"#AC0000"}
+                                                        onMouseEnter={() => {
+                                                            setHoveredPost(timeline.indexOf(post));
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                            setHoveredPost(null)
+                                                        }}
+                                                    />
+                                                    :
+                                                    <FaRegHeart
+                                                        onClick={() => handleLikePost('like', post.id)}
+                                                        size={17}
+                                                        color={"#FFFFFF"}
+                                                        onMouseEnter={e => {
+                                                            setHoveredPost(timeline.indexOf(post));
+                                                        }}
+                                                        onMouseLeave={e => {
+                                                            setHoveredPost(null)
+                                                        }}
+                                                    />
+                                                }
 
-                                            <p>{`${post.likesAmount} likes`}</p>
+                                                <p>{`${post.likesAmount} likes`}</p>
 
-                                            <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
-                                            <p>{` 23 Comments`}</p>
+                                                <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
+                                                <p>{` 23 Comments`}</p>
 
-                                            <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
-                                                {post.likedBy}
+                                                <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
+                                                    {post.likedBy}
 
-                                                <div />
-                                            </LikedBy>
-                                        </LeftPostContainer>
+                                                    <div />
+                                                </LikedBy>
+                                            </LeftPostContainer>
 
-                                        <PostInfos post={post} />
+                                            <PostInfos post={post} />
 
-                                    </PostBox>
-                                    <CommentsInfos
-                                        isShowingComments={isShowingComments}
-                                        showingCommentsPostId={showingCommentsPostId}
-                                        post={post}
-                                    />
+                                        </PostBox>
+                                        <CommentsInfos
+                                            isShowingComments={isShowingComments}
+                                            showingCommentsPostId={showingCommentsPostId}
+                                            post={post}
+                                        />
+                                    </PostWrapper>
                                 </>
                             )}
 

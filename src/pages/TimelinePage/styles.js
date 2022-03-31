@@ -83,8 +83,7 @@ const ShareBox = styled.div`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
     display: ${props => props.isHidden};
-    margin-top: 15px ;
-
+    margin-top:30px ;
     form {
         width: 100%;
         height: 100%;
@@ -191,7 +190,22 @@ const PublishButton = styled.button`
         `)
     };
 `;
+const PostWrapper = styled.div`
+    background-color: #1E1E1E;
+    margin-top: 30px ;
+    border-radius: 16px;
 
+     @media(max-width: 700px){
+        border-radius: 1px ;
+        width: 100vw;
+        max-width:fit-content ;
+         margin: 16px 0;
+
+    }
+     @media(max-width: 1280px) {
+        margin: 30px 0;
+    }
+`
 const PostBox = styled.div`
     border-radius: 16px;
     width: 100%;
@@ -199,21 +213,18 @@ const PostBox = styled.div`
     max-height: 340px;
     background-color: #171717;
     padding: 15px;
-    margin-top:15px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     gap: 14px;
     font-family: Lato;
     font-weight: 400;
-    z-index: 1;
-    @media(max-width: 1280px) {
-        margin: 30px 0;
-    }
+    background-color: #171717;
+
+   
      @media(max-width: 700px) {
         width: 100vw;
         border-radius: 0px;
-        margin: 16px 0;
 
     }
 `;
@@ -283,5 +294,5 @@ const LikedBy = styled.div`
 
 export {
     Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput,
-    PublishButton, PostBox, LeftPostContainer, LikedBy
+    PublishButton, PostWrapper, PostBox, LeftPostContainer, LikedBy
 }
