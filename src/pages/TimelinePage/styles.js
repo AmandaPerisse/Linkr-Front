@@ -40,7 +40,6 @@ const Feed = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
 
     h3 {
         font-family: Lato;
@@ -75,6 +74,7 @@ const ShareBox = styled.div`
     border-radius: 16px;
     width: 100%;
     height: 164px;
+    margin-bottom: 15px;
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
@@ -203,7 +203,7 @@ const PostBox = styled.div`
     font-weight: 400;
 
     @media(max-width: 1280px) {
-        margin: 30px 0;
+        margin: 15px 0;
     }
      @media(max-width: 700px) {
         width: 100vw;
