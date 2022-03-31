@@ -26,6 +26,7 @@ export default function TimelinePage({ title, isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [likedByUserPosts, setLikedByUserPosts] = useState([]);
 
     useEffect(() => {
         setIsLoadingFeed(true);
@@ -75,12 +76,7 @@ export default function TimelinePage({ title, isHidden }) {
         setUrlToPost('');
         setPostDescription('');
 
-        const promise = publishPost(
-            {
-                "url": urlToPost,
-                "description": postDescription
-            }, token
-        );
+        const promise = publishPost({"url": urlToPost, "description": postDescription}, token);
 
         promise.then(response => {
             setTimesFeedUpdated(timesFeedUpdated + 1);

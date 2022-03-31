@@ -36,10 +36,6 @@ const Main = styled.div`
     }
 `;
 
-
-
-
-
 const Feed = styled.div`
     display: flex;
     flex-direction: column;
@@ -242,6 +238,10 @@ const LeftPostContainer = styled.div`
 
     svg {
         cursor: pointer;
+        :hover{
+            color: #1877F2 !important;
+            filter: brightness(95%);
+        }
     }
 `;
 
