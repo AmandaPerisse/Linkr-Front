@@ -1,8 +1,8 @@
 import axios from "axios";
 
 //const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-const BASE_URL = "https://top-linkr.herokuapp.com";
-//const BASE_URL = "http://localhost:5000";
+// const BASE_URL = "https://top-linkr.herokuapp.com";
+const BASE_URL = "http://localhost:5000";
 
 function createConfig(token) {
   return { headers: { Authorization: `Bearer ${token}` } };
@@ -42,12 +42,12 @@ function deletePost(token, id) {
 
 function likePost(id, token) {
   const config = createConfig(token);
-  return axios.patch(`${BASE_URL}/like/${id}`, null,config);
+  return axios.patch(`${BASE_URL}/like/${id}`, null, config);
 }
 
 function unlikePost(id, token) {
   const config = createConfig(token);
-  return axios.patch(`${BASE_URL}/unlike/${id}`, null,config);
+  return axios.patch(`${BASE_URL}/unlike/${id}`, null, config);
 }
 
 async function getTrendingsHashtags(token) {

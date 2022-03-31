@@ -3,7 +3,7 @@ import React, { useRef, useContext, useEffect, useState } from 'react';
 import { IoMdTrash } from 'react-icons/io'
 import { TiPencil } from 'react-icons/ti'
 import UserContext from '../../Providers/UserContext';
-import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper, ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost } from './styles';
+import { PostContainer, LinkPreview, LinkData, LinkImage, UsernameWrapper, IconsWrapper, ConfirmBox, ConfirmCard, CheckAnswer, GoBackButton, ConfirmButton, InputEditingPost, CommentsWrapper, CommentBox, CommentImg, CommentUserInfos, CommentBody, Dot, KinshipInfo, Username, KinshipBox, HorizontalBar } from './styles';
 import { deletePost, getUser, updatePost } from '../../services/api';
 import { Grid } from 'react-loader-spinner'
 
@@ -113,6 +113,7 @@ function PostInfos({ post }) {
 
     return (
         <>
+
             {isConfirmingDelete ?
                 (
                     <ConfirmBox>
