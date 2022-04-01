@@ -54,7 +54,6 @@ function LoginPage() {
                 else {
                     alert("Erro no sistema! Tente novamente.")
                 }
-                console.log(error.response.status)
                 setIsLoading(false);
                 setInputLoading("");
             })

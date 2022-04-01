@@ -62,7 +62,6 @@ function PostInfos({ post }) {
 
             promise.catch((error) => {
                 alert("Não foi possivel excluir este post ");
-                console.log(error.response);
             });
         }, 3000);
     }
@@ -146,7 +145,6 @@ function PostInfos({ post }) {
 
                 ) : ("")
             }
-
 
             <PostContainer>
                 <UsernameWrapper>

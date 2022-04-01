@@ -151,7 +151,6 @@ export default function UserPage({ isHidden }) {
 
         promise.catch(error => {
             alert("Houve um erro ao publicar seu link");
-            console.log(error.response.status)
             setIsPublishing(false);
         })
     }

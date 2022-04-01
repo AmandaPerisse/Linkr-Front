@@ -51,7 +51,6 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
 
         promise.catch((error) => {
             alert("Não foi possível enviar esse comentario ");
-            console.log(error.response);
         });
 
     }

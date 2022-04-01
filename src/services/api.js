@@ -87,6 +87,11 @@ async function getUserId(id, token) {
   return await axios.get(`${BASE_URL}/userid/${id}`, config);
 }
 
+async function getPostsAmount(token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/postamount`, config);
+}
+
 async function checkIfFollows(userId, followerId) {
   return await axios.get(`${BASE_URL}/checkiffollows/${userId}/${followerId}`);
 }
@@ -110,6 +115,6 @@ export {
   getTrendingsHashtags, getTrending,
   getUser, getUserPosts, searchUsers, getAllUsers, getUserId,
   sendComment, getCommentsById,
-  checkIfFollows, follow, unfollow, getUserName
+  checkIfFollows, follow, unfollow, getUserName, getPostsAmount
 };
 

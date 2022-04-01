@@ -11,6 +11,7 @@ import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, D
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 import CommentsInfos from "../../components/CommentsInfos/index.js";
+import NewPosts from "../../components/NewPosts/index.js";
 
 export default function TimelinePage({ title, isHidden }) {
     const { token } = useContext(UserContext);
@@ -32,6 +33,7 @@ export default function TimelinePage({ title, isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [isHashtagPage, setIsHashtagPage] = useState(false);
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
@@ -41,6 +43,7 @@ export default function TimelinePage({ title, isHidden }) {
     useEffect(() => {
         setIsLoadingFeed(true);
         if (hashtag) {
+            setIsHashtagPage(true);
             const promise = getTrending(hashtag, token);
 
             promise.then((response) => {
@@ -65,6 +68,7 @@ export default function TimelinePage({ title, isHidden }) {
             });
         }
         else {
+            setIsHashtagPage(false);
             const promise = getTimeline(token);
 
             promise.then((response) => {
@@ -118,7 +122,6 @@ export default function TimelinePage({ title, isHidden }) {
 
         promise.catch(error => {
             alert("Houve um erro ao publicar seu link");
-            console.log(error.response.status);
             setIsPublishing(false);
         })
     }
@@ -183,13 +186,9 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     function getComments(postId) {
-        console.log("o post eh esse pow", postId)
         const promise = getCommentsById(token, postId)
 
         promise.then(response => {
-            console.log(response.data)
-            console.log("tamanhooo ", response.data.length)
-
             setCommentsByPostId(response.data)
         });
         promise.catch(error => {
@@ -199,7 +198,6 @@ export default function TimelinePage({ title, isHidden }) {
             }
             else {
                 alert("Não consequimos carregar os comentários")
-                console.log("erro#1-PlansPage: ", error.response.status)
             }
         }
         );
@@ -237,7 +235,7 @@ export default function TimelinePage({ title, isHidden }) {
                             </PublishButton>
                         </form>
                     </ShareBox>
-
+                    <NewPosts isHashtagPage = {isHashtagPage}/>
                     {isLoadingFeed ?
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
@@ -287,9 +285,9 @@ export default function TimelinePage({ title, isHidden }) {
                                                 <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                                     {actualLikedByText[timeline.indexOf(post)]}
 
-                                                    <div />
-                                                </LikedBy>
-                                            </LeftPostContainer>
+                                                        <div />
+                                                    </LikedBy>
+                                                </LeftPostContainer>
 
                                             <PostInfos post={post} />
 
@@ -300,10 +298,9 @@ export default function TimelinePage({ title, isHidden }) {
                                             post={post}
                                             commentsByPostId={commentsByPostId}
                                         />
-                                    </PostWrapper>
-                                </>
+                                        </PostWrapper>
+                                    </>
                             )}
-
                 </Feed>
                 <TrendingsHashtags trendingList={trendingList} />
             </Main>
