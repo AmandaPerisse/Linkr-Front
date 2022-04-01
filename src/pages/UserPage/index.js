@@ -83,7 +83,6 @@ export default function UserPage({ isHidden }) {
         const promise = checkIfFollows(userId, followerId);
 
         promise.then((response) => {
-            console.log(response.data);
             setDoesFollow(response.data);
         });
 

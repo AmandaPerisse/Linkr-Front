@@ -35,8 +35,6 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
     }
 
     function handleSendComment(postId) {
-        console.log(commentValue)
-        console.log(postId)
         const promise = axios.post('http://localhost:5000/comments',
             {
                 postId: postId,
@@ -60,7 +58,6 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
 
     }
 
-    console.log(post)
     return (
         <CommentsWrapper>
             <AnimatePresence>

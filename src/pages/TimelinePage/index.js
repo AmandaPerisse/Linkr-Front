@@ -6,7 +6,7 @@ import { AiOutlineComment } from 'react-icons/ai';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags, getUserFriends, getUserName, getUserPosts } from "../../services/api.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, PostWrapper } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
@@ -14,7 +14,8 @@ import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 import CommentsInfos from "../../components/CommentsInfos/index.js";
 
 export default function TimelinePage({ title, isHidden }) {
-    const { token } = useContext(UserContext);
+    const {  userInfos, token } = useContext(UserContext);
+    const { userName } = userInfos;
 
     const { hashtag } = useParams();
     if (!title) {
@@ -22,6 +23,7 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     const [timeline, setTimeline] = useState([]);
+    const [friendPosts, setFriendPosts] = useState([]);
     const [urlToPost, setUrlToPost] = useState("")
     const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
@@ -29,11 +31,68 @@ export default function TimelinePage({ title, isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [userId, setUserId] = useState([]);
+    const [userFriends, setUserFriends] = useState([]);
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
 
+    useEffect(() => {
 
+        const promise = getUserName(userName);
+
+        promise.then((response) => {
+            setUserId(response.data[0].id);
+        });
+
+        promise.catch((error) => {
+            console.log(error);
+        });
+    }, [userName]);
+
+    useEffect(() => {
+
+        const promise = getUserFriends(userId);
+
+        promise.then((response) => {
+            setUserFriends(response.data);
+        });
+
+        promise.catch((error) => {
+            console.log(error);
+        });
+    }, [userId]);
+
+    useEffect(async () => {
+        let aux = [];
+        try
+        {
+
+        
+        setIsLoadingFeed(true);
+        
+        for (let i=0; i<userFriends.length; i++)
+        {
+            const response = await getUserPosts(userFriends[i].friendId, token);
+                console.log("postatual", userFriends[i].friendId, response.data);
+                if ( response.data.length !== 0)
+                {
+                    console.log("entrou no if")
+                    aux.push(...response.data);    
+                }
+        } 
+        }
+        catch(error) {
+                alert('An error occured while trying to fetch the posts, please refresh the page');
+                setIsLoadingFeed(false);
+            };
+
+            setFriendPosts([...aux]);
+            setIsLoadingFeed(false);
+
+        }
+    , [userFriends, token]);
+    
 
     useEffect(() => {
         setIsLoadingFeed(true);
@@ -75,7 +134,7 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
-    }, [token, timesFeedUpdated]);
+    }, [token, timesFeedUpdated, hashtag]);
 
     function handlePublishing(e) {
         e.preventDefault();
@@ -116,7 +175,7 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     function handleIsShowingComments(postId) {
-        if (isShowingComments == false) {
+        if (isShowingComments === false) {
             setIsShowingComments(true)
             setShowingCommentsPostId(postId)
         }
@@ -170,7 +229,7 @@ export default function TimelinePage({ title, isHidden }) {
                         timeline.length === 0 ?
                             <h3>There are no posts yet</h3>
                             :
-                            timeline.map(post =>
+                            friendPosts.map(post =>
                                 <>
                                     <PostWrapper>
                                         <PostBox>

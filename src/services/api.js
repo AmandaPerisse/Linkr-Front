@@ -94,6 +94,10 @@ async function getUserName(name) {
   return await axios.get(`${BASE_URL}/username/${name}`);
 }
 
+async function getUserFriends(id) {
+  return await axios.get(`${BASE_URL}/userfriends/${id}`);
+}
+
 export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost,
          updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, 
-         getAllUsers, getUserId, checkIfFollows, follow, unfollow, getUserName };
+         getAllUsers, getUserId, checkIfFollows, follow, unfollow, getUserName, getUserFriends };
