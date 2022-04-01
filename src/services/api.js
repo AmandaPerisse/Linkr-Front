@@ -26,6 +26,11 @@ async function getTimeline(token) {
   return await axios.get(`${BASE_URL}/feed`, config);
 }
 
+function getCommentsById(token, postId) {
+  const config = createConfig(token);
+  return axios.get(`${BASE_URL}/comments/${postId}`, config);
+}
+
 function updatePost(body, idPost) {
   return axios.put(`${BASE_URL}/feed/${idPost}`, body);
 }
@@ -42,14 +47,18 @@ function deletePost(token, id) {
 
 function likePost(id, token) {
   const config = createConfig(token);
-  return axios.patch(`${BASE_URL}/like/${id}`, null,config);
+  return axios.patch(`${BASE_URL}/like/${id}`, null, config);
 }
 
 function unlikePost(id, token) {
   const config = createConfig(token);
-  return axios.patch(`${BASE_URL}/unlike/${id}`, null,config);
+  return axios.patch(`${BASE_URL}/unlike/${id}`, null, config);
 }
 
+function sendComment(body, token) {
+  const config = createConfig(token);
+  return axios.post(`${BASE_URL}/comments`, body, config);
+}
 async function getTrendingsHashtags(token) {
   const config = createConfig(token);
   return await axios.get(`${BASE_URL}/hashtag`, config);
@@ -73,10 +82,34 @@ async function getAllUsers() {
   return await axios.get(`${BASE_URL}/allusers`);
 }
 
-async function getUserId(id) {
-  return await axios.get(`${BASE_URL}/getuser/${id}`);
+async function getUserId(id, token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/userid/${id}`, config);
 }
 
-export { signup, login, getTimeline, publishPost, deletePost,
-  likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending,
-  getUser, getUserPosts, searchUsers, getAllUsers, getUserId };
+async function checkIfFollows(userId, followerId) {
+  return await axios.get(`${BASE_URL}/checkiffollows/${userId}/${followerId}`);
+}
+
+async function follow(userId, followerId) {
+  return await axios.post(`${BASE_URL}/follow/${userId}/${followerId}`);
+}
+
+async function unfollow(userId, followerId) {
+  return await axios.delete(`${BASE_URL}/unfollow/${userId}/${followerId}`);
+}
+
+async function getUserName(name) {
+  return await axios.get(`${BASE_URL}/username/${name}`);
+}
+
+
+export {
+  signup, login, getTimeline,
+  publishPost, deletePost, likePost, unlikePost, updatePost,
+  getTrendingsHashtags, getTrending,
+  getUser, getUserPosts, searchUsers, getAllUsers, getUserId,
+  sendComment, getCommentsById,
+  checkIfFollows, follow, unfollow, getUserName
+};
+

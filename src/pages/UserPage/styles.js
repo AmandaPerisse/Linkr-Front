@@ -246,7 +246,41 @@ const LikedBy = styled.div`
     }
 `;
 
+const FollowButton = styled.div`
+
+    position: absolute;
+    font-family: Lato;
+    top: 85px;
+    left: 65%;
+    height: 35px;
+    width: 120px;
+    background-color: #1877F2;
+    line-height: 35px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    z-index: 3;
+`;
+
+const UnfollowButton = styled.div`
+
+    position: absolute;
+    font-family: Lato;
+    top: 85px;
+    left: 65%;
+    height: 35px;
+    width: 120px;
+    background-color: white;
+    line-height: 35px;
+    text-align: center;
+    color: #1877F2;
+    font-weight: bold;
+    border-radius: 5px;
+    z-index: 2;
+`;
+
 export {
     Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput,
-    PublishButton, PostBox, LeftPostContainer, LikedBy
+    PublishButton, PostBox, LeftPostContainer, LikedBy, FollowButton, UnfollowButton
 }

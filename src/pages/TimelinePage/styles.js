@@ -31,7 +31,8 @@ const Main = styled.div`
     justify-content: space-between; 
     margin: 72px 0;
     gap: 20px;
-     @media(max-width: 700px) {
+
+    @media(max-width: 700px) {
         width: fit-content;
     }
 `;
@@ -49,8 +50,9 @@ const Feed = styled.div`
         font-weight: 700;
     }
 
-    width: 615px; //Hashtag update
-     @media(max-width: 700px) {
+    width: 615px;
+
+    @media(max-width: 700px) {
         width: fit-content;
     }
 `;
@@ -67,7 +69,7 @@ const Title = styled.h1`
         margin-bottom: 18px;
     }
     @media(max-width: 700px) {
-       padding-left: 18px ;
+       padding-left: 18px;
     }
 `;
 
@@ -90,7 +92,7 @@ const ShareBox = styled.div`
         gap: 5px;
     }
 
-     @media(max-width: 700px) {
+    @media(max-width: 700px) {
         width: 100vw;
         border-radius: 0px;
     }
@@ -129,7 +131,7 @@ const LinkInput = styled.input`
         color: #949494;
     }
 
-    :focus{
+    :focus {
         outline: 2px solid #1877F2;
     }
 `;
@@ -154,7 +156,7 @@ const DescriptionInput = styled.textarea`
         color: #949494;
     }
 
-    :focus{
+    :focus {
         outline: 2px solid #1877F2;
     }
 `;
@@ -188,9 +190,26 @@ const PublishButton = styled.button`
     };
 `;
 
+const PostWrapper = styled.div`
+    background-color: #1E1E1E;
+    margin-top: 30px ;
+    border-radius: 16px;
+
+    @media(max-width: 700px){
+        border-radius: 1px ;
+        width: 100vw;
+        max-width:fit-content ;
+        margin: 16px 0;
+    }
+
+    @media(max-width: 1280px) {
+        margin: 30px 0;
+    }
+`;
+
 const PostBox = styled.div`
     border-radius: 16px;
-    width: 100%;
+    min-width: 100%;
     height: auto;
     max-height: 340px;
     background-color: #171717;
@@ -202,15 +221,12 @@ const PostBox = styled.div`
     gap: 14px;
     font-family: Lato;
     font-weight: 400;
+    background-color: #171717;
 
-    @media(max-width: 1280px) {
-        margin: 15px 0;
-    }
-     @media(max-width: 700px) {
+   
+    @media(max-width: 700px) {
         width: 100vw;
         border-radius: 0px;
-        margin: 16px 0;
-
     }
 `;
 
@@ -226,7 +242,6 @@ const LeftPostContainer = styled.div`
         border-radius: 50%;
         background-color: #FFFFFF;
         object-fit: cover;
-        margin-bottom: 17px;
         cursor: pointer;
     }
 
@@ -234,24 +249,26 @@ const LeftPostContainer = styled.div`
         font-size: 9px;
         text-align: center;
         color: #FFFFFF;
-        margin: 12px 0;
+        margin-top: 4px;
+        max-width: 70px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     svg {
         cursor: pointer;
+        width: 19px;
+        height: 18px;
+        color: #FFFFFF;
+        margin-top:15px ;
+        
         :hover{
             color: #1877F2 !important;
             filter: brightness(95%);
         }
     }
 `;
-
-
-
-
-
-
-
 
 const LikedBy = styled.div`
     position: absolute;
@@ -282,5 +299,5 @@ const LikedBy = styled.div`
 
 export {
     Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput,
-    PublishButton, PostBox, LeftPostContainer, LikedBy
+    PublishButton, PostWrapper, PostBox, LeftPostContainer, LikedBy
 }

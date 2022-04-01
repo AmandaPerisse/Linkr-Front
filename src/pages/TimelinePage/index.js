@@ -1,14 +1,16 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
+import { AiOutlineComment } from 'react-icons/ai';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags, getCommentsById } from "../../services/api.js";
 import "../../styles/reset.css";
-import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
+import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, PostWrapper } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
+import CommentsInfos from "../../components/CommentsInfos/index.js";
 
 export default function TimelinePage({ title, isHidden }) {
     const { token } = useContext(UserContext);
@@ -31,11 +33,16 @@ export default function TimelinePage({ title, isHidden }) {
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
 
+    const [isShowingComments, setIsShowingComments] = useState(false);
+    const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
+    const [commentsByPostId, setCommentsByPostId] = useState([]);
+    const [commentsAmount, setCommentsAmount] = useState(0);
+
     useEffect(() => {
         setIsLoadingFeed(true);
         if (hashtag) {
             const promise = getTrending(hashtag, token);
-            
+
             promise.then((response) => {
                 setTimeline([...response.data]);
 
@@ -94,7 +101,6 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
-
     }, [token, hashtag, timesFeedUpdated]);
 
     function handlePublishing(e) {
@@ -164,7 +170,40 @@ export default function TimelinePage({ title, isHidden }) {
         return;
     }
 
+    function handleIsShowingComments(postId) {
+        if (isShowingComments == false) {
+            getComments(postId)
+            setIsShowingComments(true)
+            setShowingCommentsPostId(postId)
+        }
+        else {
+            setIsShowingComments(false)
+            setShowingCommentsPostId(null)
+        }
+    }
 
+    function getComments(postId) {
+        console.log("o post eh esse pow", postId)
+        const promise = getCommentsById(token, postId)
+
+        promise.then(response => {
+            console.log(response.data)
+            console.log("tamanhooo ", response.data.length)
+
+            setCommentsByPostId(response.data)
+        });
+        promise.catch(error => {
+            if (error.response.status === 404) {
+                setCommentsByPostId([])
+                alert("pegou mas nao tem comentarios nesse post ainda")
+            }
+            else {
+                alert("Não consequimos carregar os comentários")
+                console.log("erro#1-PlansPage: ", error.response.status)
+            }
+        }
+        );
+    }
     return (
         <Container isPublishing={isPublishing}>
             <Header />
@@ -209,47 +248,60 @@ export default function TimelinePage({ title, isHidden }) {
                             <h3>There are no posts yet</h3>
                             :
                             timeline.map(post =>
-                                <PostBox>
-                                    <LeftPostContainer>
-                                        <img src={post.user.pictureUrl} alt={post.user.name} />
-                                        {likedByUserPosts.includes(post.id) ?
-                                            <FaHeart
-                                                onClick={() => handleLikePost('unlike', post.id)}
-                                                size={17}
-                                                color={"#AC0000"}
-                                                onMouseEnter={() => {
-                                                    setHoveredPost(timeline.indexOf(post));
-                                                }}
-                                                onMouseLeave={() => {
-                                                    setHoveredPost(null)
-                                                }}
-                                            />
-                                            :
-                                            <FaRegHeart
-                                                onClick={() => handleLikePost('like', post.id)}
-                                                size={17}
-                                                color={"#FFFFFF"}
-                                                onMouseEnter={e => {
-                                                    setHoveredPost(timeline.indexOf(post));
-                                                }}
-                                                onMouseLeave={e => {
-                                                    setHoveredPost(null)
-                                                }}
-                                            />
-                                        }
+                                <>
+                                    <PostWrapper>
+                                        <PostBox>
+                                            <LeftPostContainer>
+                                                <img src={post.user.pictureUrl} alt={post.user.name} />
+                                                {likedByUserPosts.includes(post.id) ?
+                                                    <FaHeart
+                                                        onClick={() => handleLikePost('unlike', post.id)}
+                                                        size={17}
+                                                        color={"#AC0000"}
+                                                        onMouseEnter={() => {
+                                                            setHoveredPost(timeline.indexOf(post));
+                                                        }}
+                                                        onMouseLeave={() => {
+                                                            setHoveredPost(null)
+                                                        }}
+                                                    />
+                                                    :
+                                                    <FaRegHeart
+                                                        onClick={() => handleLikePost('like', post.id)}
+                                                        size={17}
+                                                        color={"#FFFFFF"}
+                                                        onMouseEnter={e => {
+                                                            setHoveredPost(timeline.indexOf(post));
+                                                        }}
+                                                        onMouseLeave={e => {
+                                                            setHoveredPost(null)
+                                                        }}
+                                                    />
+                                                }
 
-                                        <p>{`${actualLikesAmount[timeline.indexOf(post)]} ${actualLikesAmount[timeline.indexOf(post)] === 1 ? 'like' : 'likes'}`}</p>
+                                                <p>{`${actualLikesAmount[timeline.indexOf(post)]} ${actualLikesAmount[timeline.indexOf(post)] === 1 ? 'like' : 'likes'}`}</p>
 
-                                        <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
-                                            {actualLikedByText[timeline.indexOf(post)]}
+                                                <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
+                                                <p>{`${post.commentsAmount} comments`}</p>
 
-                                            <div />
-                                        </LikedBy>
-                                    </LeftPostContainer>
+                                                <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
+                                                    {actualLikedByText[timeline.indexOf(post)]}
 
-                                    <PostInfos post={post} />
+                                                    <div />
+                                                </LikedBy>
+                                            </LeftPostContainer>
 
-                                </PostBox>
+                                            <PostInfos post={post} />
+
+                                        </PostBox>
+                                        <CommentsInfos
+                                            isShowingComments={isShowingComments}
+                                            showingCommentsPostId={showingCommentsPostId}
+                                            post={post}
+                                            commentsByPostId={commentsByPostId}
+                                        />
+                                    </PostWrapper>
+                                </>
                             )}
 
                 </Feed>
