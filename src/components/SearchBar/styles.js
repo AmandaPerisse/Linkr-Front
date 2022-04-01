@@ -293,7 +293,6 @@ const InputWraper = styled.div`
 width: 600px;
 height: 50px;
 position: absolute;
-top: 10px;
 left: 0;
 right: 0;
 margin: 0 auto;
@@ -303,6 +302,7 @@ const SearchNode = styled.h1`
 width: 600px;
 height: 50px;
 position: relative;
+top: 5px;
 left: 0;
 right: 0;
 margin:0 auto;
@@ -310,10 +310,12 @@ font-size: 15px;
 z-index: 5;
 border-radius: 25px;
 background-color: lightgray;
+font-family: 'Lato';
 `;
 
 const CustomUl = styled.ul`
 position: absolute;
+top: 55px;
 left: 0;
 right: 0;
 margin: 0 auto;`;
@@ -321,21 +323,21 @@ margin: 0 auto;`;
 const UserPfp = styled.img`
 height: 30px;
 width: 30px;
-top: 12px;
+top: 3px;
 left: 13px;
 border-radius: 50%;
 position: relative;`;
 
 const CustomSpan = styled.span`
-font-family: 'Lato';
-margin-left: 25px;`;
+margin-left: 25px;
+`;
+
 
 const SearchIcon = styled.div`
 position: relative;
 height: 30px;
 width: 30px;
 font-size: 30px;
-top: 12px;
 left: 550px;
 color: gray;
 z-index: 6;`
