@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { AiOutlineComment } from 'react-icons/ai';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
@@ -12,6 +13,7 @@ import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, D
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 import CommentsInfos from "../../components/CommentsInfos/index.js";
+import NewPosts from "../../components/NewPosts/index.js";
 
 export default function TimelinePage({ title, isHidden }) {
     const { token } = useContext(UserContext);
@@ -22,13 +24,14 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     const [timeline, setTimeline] = useState([]);
-    const [urlToPost, setUrlToPost] = useState("")
-    const [postDescription, setPostDescription] = useState("")
+    const [urlToPost, setUrlToPost] = useState("");
+    const [postDescription, setPostDescription] = useState("");
     const [hoveredPost, setHoveredPost] = useState(null);
     const [timesFeedUpdated, setTimesFeedUpdated] = useState(0);
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [isHashtagPage, setIsHashtagPage] = useState(false);
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
@@ -38,6 +41,7 @@ export default function TimelinePage({ title, isHidden }) {
     useEffect(() => {
         setIsLoadingFeed(true);
         if (hashtag) {
+            setIsHashtagPage(true);
             const promise = getTrending(hashtag, token);
 
             promise.then((response) => {
@@ -51,6 +55,7 @@ export default function TimelinePage({ title, isHidden }) {
             });
         }
         else {
+            setIsHashtagPage(false);
             const promise = getTimeline(token);
 
             promise.then((response) => {
@@ -97,7 +102,6 @@ export default function TimelinePage({ title, isHidden }) {
 
         promise.catch(error => {
             alert("Houve um erro ao publicar seu link");
-            console.log(error.response.status)
             setIsPublishing(false);
         })
     }
@@ -160,7 +164,7 @@ export default function TimelinePage({ title, isHidden }) {
                             </PublishButton>
                         </form>
                     </ShareBox>
-
+                    <NewPosts isHashtagPage = {isHashtagPage}/>
                     {isLoadingFeed ?
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
@@ -170,7 +174,8 @@ export default function TimelinePage({ title, isHidden }) {
                         timeline.length === 0 ?
                             <h3>There are no posts yet</h3>
                             :
-                            timeline.map(post =>
+                            <InfiniteScroll dataLength={timeline.length}>
+                            {timeline.map(post =>
                                 <>
                                     <PostWrapper>
                                         <PostBox>
@@ -225,7 +230,7 @@ export default function TimelinePage({ title, isHidden }) {
                                     </PostWrapper>
                                 </>
                             )}
-
+                            </InfiniteScroll>}
                 </Feed>
                 <TrendingsHashtags trendingList={trendingList} />
             </Main>

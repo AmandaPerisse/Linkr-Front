@@ -77,4 +77,8 @@ async function getUserId(id) {
   return await axios.get(`${BASE_URL}/getuser/${id}`);
 }
 
-export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId };
+async function getPostsAmount(id) {
+  return await axios.get(`${BASE_URL}/postamount`);
+}
+
+export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId, getPostsAmount };

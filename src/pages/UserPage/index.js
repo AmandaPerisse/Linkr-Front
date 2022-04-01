@@ -87,7 +87,6 @@ export default function TimelinePage({ title, isHidden }) {
 
         promise.catch(error => {
             alert("Houve um erro ao publicar seu link");
-            console.log(error.response.status)
             setIsPublishing(false);
         })
     }
