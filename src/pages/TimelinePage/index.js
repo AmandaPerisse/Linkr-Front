@@ -2,11 +2,10 @@ import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { AiOutlineComment } from 'react-icons/ai';
-
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags, getCommentsById } from "../../services/api.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, PostWrapper } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
@@ -23,8 +22,12 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     const [timeline, setTimeline] = useState([]);
-    const [urlToPost, setUrlToPost] = useState("");
-    const [postDescription, setPostDescription] = useState("");
+    const [likedByUserPosts, setLikedByUserPosts] = useState([]);
+    const [actualLikesAmount, setActualLikesAmount] = useState([]);
+    const [actualLikedByText, setActualLikedByText] = useState([]);
+
+    const [urlToPost, setUrlToPost] = useState("")
+    const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
     const [timesFeedUpdated, setTimesFeedUpdated] = useState(0);
     const [trendingList, setTrendingList] = useState([]);
@@ -34,7 +37,8 @@ export default function TimelinePage({ title, isHidden }) {
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
-
+    const [commentsByPostId, setCommentsByPostId] = useState([]);
+    const [commentsAmount, setCommentsAmount] = useState(0);
 
     useEffect(() => {
         setIsLoadingFeed(true);
@@ -43,10 +47,21 @@ export default function TimelinePage({ title, isHidden }) {
             const promise = getTrending(hashtag, token);
 
             promise.then((response) => {
-                setIsLoadingFeed(false);
                 setTimeline([...response.data]);
-            });
 
+                const postsUserLiked = [];
+                response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
+                setLikedByUserPosts(postsUserLiked);
+
+                const likesAmount = response.data.map(post => post.likesAmount);
+                setActualLikesAmount(likesAmount);
+
+                const actualLikedByText = response.data.map(post => post.likedBy);
+                setActualLikedByText(actualLikedByText);
+
+                setIsLoadingFeed(false);
+            });
+            
             promise.catch((error) => {
                 alert('An error occured while trying to fetch the posts, please refresh the page');
                 setIsLoadingFeed(false);
@@ -57,8 +72,19 @@ export default function TimelinePage({ title, isHidden }) {
             const promise = getTimeline(token);
 
             promise.then((response) => {
-                setIsLoadingFeed(false);
                 setTimeline([...response.data]);
+
+                const postsUserLiked = [];
+                response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
+                setLikedByUserPosts(postsUserLiked);
+
+                const likesAmount = response.data.map(post => post.likesAmount);
+                setActualLikesAmount(likesAmount);
+
+                const actualLikedByText = response.data.map(post => post.likedBy);
+                setActualLikedByText(actualLikedByText);
+
+                setIsLoadingFeed(false);
             });
 
             promise.catch((error) => {
@@ -74,11 +100,12 @@ export default function TimelinePage({ title, isHidden }) {
                 setTrendingList(response.data);
             }
         });
+
         promiseTrendings.catch((error) => {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
-    }, [token, timesFeedUpdated]);
+    }, [token, hashtag, timesFeedUpdated]);
 
     function handlePublishing(e) {
         e.preventDefault();
@@ -86,12 +113,7 @@ export default function TimelinePage({ title, isHidden }) {
         setUrlToPost('');
         setPostDescription('');
 
-        const promise = publishPost(
-            {
-                "url": urlToPost,
-                "description": postDescription
-            }, token
-        );
+        const promise = publishPost({"url": urlToPost, "description": postDescription}, token);
 
         promise.then(response => {
             setTimesFeedUpdated(timesFeedUpdated + 1);
@@ -103,22 +125,57 @@ export default function TimelinePage({ title, isHidden }) {
             setIsPublishing(false);
         })
     }
-
+    
     async function handleLikePost(type, postId) {
         if (type === 'like') {
             await likePost(postId, token);
-        };
+            setLikedByUserPosts([...likedByUserPosts, postId]);
+            
+            const postIndex = timeline.findIndex(post => post.id === postId);
+            const peopleWhoLikedArray = timeline[postIndex].likedBy.split(',');
 
+            const newLikesAmount = timeline[postIndex].likesAmount + 1;
+            actualLikesAmount[postIndex] = newLikesAmount;
+
+            setActualLikesAmount([...actualLikesAmount]);
+
+            let likedBy = '';
+            if (newLikesAmount >= 4)
+                likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${newLikesAmount - 2} others`;
+            
+            if (newLikesAmount === 3)
+                likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${peopleWhoLikedArray[1]}`;
+            
+            if (newLikesAmount === 2)
+                likedBy = `You and ${peopleWhoLikedArray[0].replace(/,/g, '')}`;
+
+            if (newLikesAmount === 1)
+                likedBy = `You`;
+
+            actualLikedByText[postIndex] = likedBy;
+            setActualLikedByText([...actualLikedByText]);
+        };
+        
         if (type === 'unlike') {
             await unlikePost(postId, token);
+            setLikedByUserPosts(likedByUserPosts.filter(id => id !== postId));
+
+            const postIndex = timeline.findIndex(post => post.id === postId);
+
+            const newLikesAmount = actualLikesAmount[postIndex] - 1;
+            actualLikesAmount[postIndex] = newLikesAmount;
+            setActualLikesAmount([...actualLikesAmount]);
+
+            actualLikedByText[postIndex] = timeline[postIndex].likedBy;
+            setActualLikedByText([...actualLikedByText]);
         };
 
-        setTimesFeedUpdated(timesFeedUpdated + 1);
         return;
     }
 
     function handleIsShowingComments(postId) {
         if (isShowingComments == false) {
+            getComments(postId)
             setIsShowingComments(true)
             setShowingCommentsPostId(postId)
         }
@@ -128,7 +185,28 @@ export default function TimelinePage({ title, isHidden }) {
         }
     }
 
+    function getComments(postId) {
+        console.log("o post eh esse pow", postId)
+        const promise = getCommentsById(token, postId)
 
+        promise.then(response => {
+            console.log(response.data)
+            console.log("tamanhooo ", response.data.length)
+
+            setCommentsByPostId(response.data)
+        });
+        promise.catch(error => {
+            if (error.response.status === 404) {
+                setCommentsByPostId([])
+                alert("pegou mas nao tem comentarios nesse post ainda")
+            }
+            else {
+                alert("Não consequimos carregar os comentários")
+                console.log("erro#1-PlansPage: ", error.response.status)
+            }
+        }
+        );
+    }
     return (
         <Container isPublishing={isPublishing}>
             <Header />
@@ -216,17 +294,18 @@ export default function TimelinePage({ title, isHidden }) {
                                                     </LikedBy>
                                                 </LeftPostContainer>
 
-                                                <PostInfos post={post} />
+                                            <PostInfos post={post} />
 
-                                            </PostBox>
-                                            <CommentsInfos
-                                                isShowingComments={isShowingComments}
-                                                showingCommentsPostId={showingCommentsPostId}
-                                                post={post}
-                                            />
+                                        </PostBox>
+                                        <CommentsInfos
+                                            isShowingComments={isShowingComments}
+                                            showingCommentsPostId={showingCommentsPostId}
+                                            post={post}
+                                            commentsByPostId={commentsByPostId}
+                                        />
                                         </PostWrapper>
                                     </>
-                                )}
+                            )}
                 </Feed>
                 <TrendingsHashtags trendingList={trendingList} />
             </Main>
