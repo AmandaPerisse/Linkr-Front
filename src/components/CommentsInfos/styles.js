@@ -117,6 +117,14 @@ const Input = styled.input`
 
     background: #252525;
     border-radius: 8px;
+    color: #fff;
+    ::placeholder {
+            color: #ACACAC;
+            font-family: var(--font-family);
+            font-weight: 400;
+            font-size: 14px;
+        }
+    
 `
 
 export {

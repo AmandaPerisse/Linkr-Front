@@ -14,7 +14,8 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
     const [commentValue, setCommentValue] = useState("");
     const { token } = useContext(UserContext);
     const [userInfos, setUserInfos] = useState([]);
-
+    const [newComment, setNewComment] = useState([])
+    const [isThereNewComment, setIsThereNewComment] = useState(false);
 
     useEffect(() => {
         const promise = getUser(token)
@@ -38,15 +39,13 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
     }
 
     function handleSendComment(postId) {
-        console.log(commentValue)
-        console.log(postId)
+        handleShowingNewInput(post.id)
+
         const promise = sendComment({
             postId: postId,
             comment: commentValue,
         }, token)
-
         promise.then((response) => {
-            alert("comentário feito. Futuramente você poderá vê-lo")
         });
 
         promise.catch((error) => {
@@ -61,7 +60,13 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
             return "restezin"
         }
     }
+    function handleShowingNewInput(postId) {
+        setNewComment([...newComment, {
+            postId: postId,
+            comment: commentValue
+        }])
 
+    }
     return (
         <CommentsWrapper>
             <AnimatePresence>
@@ -100,17 +105,41 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
                                     </>
                                 ))}
 
+
+                                {newComment.map(info => (
+                                    <>
+                                        {info.postId === post.id ? (
+                                            <>
+                                                <CommentBox>
+                                                    <span>
+                                                        <CommentImg src={userInfos.pictureUrl} alt="user img" />
+                                                        <div>
+                                                            <CommentUserInfos>
+                                                                <Username>{userInfos.name}</Username>
+                                                                <KinshipBox>
+                                                                    <Dot />
+                                                                    <KinshipInfo> post's author </KinshipInfo>
+                                                                </KinshipBox>
+                                                            </CommentUserInfos>
+                                                            <CommentBody> {info.comment}</CommentBody>
+                                                        </div>
+                                                    </span>
+                                                </CommentBox>
+                                                <HorizontalBar />
+                                            </>
+                                        ) : ("")}
+                                    </>
+
+                                ))}
+
                             </>
 
                         ) : ("")}
 
 
 
-
-
-
                         <InputWrapper>
-                            <UserImg src="https://i.imgur.com/rEof5QC.png" alt="img user" />
+                            <UserImg src={userInfos.pictureUrl} alt="img user" />
                             <Input
                                 type="text"
                                 placeholder="write a comment..."
@@ -118,7 +147,7 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post, comment
                                 onKeyDown={(e) => handleKeyDownCommentingPost(e, post.id)}
                                 onChange={(e) => setCommentValue(e.target.value)}
                             />
-                            <FiSend onClick={() => handleSendComment(post.id)} />
+                            <FiSend onClick={() => { handleSendComment(post.id) }} />
                         </InputWrapper>
 
                     </motion.p>
