@@ -19,6 +19,10 @@ export default function TimelinePage({ title, isHidden }) {
     }
 
     const [timeline, setTimeline] = useState([]);
+    const [likedByUserPosts, setLikedByUserPosts] = useState([]);
+    const [actualLikesAmount, setActualLikesAmount] = useState([]);
+    const [actualLikedByText, setActualLikedByText] = useState([]);
+
     const [urlToPost, setUrlToPost] = useState("")
     const [postDescription, setPostDescription] = useState("")
     const [hoveredPost, setHoveredPost] = useState(null);
@@ -26,7 +30,6 @@ export default function TimelinePage({ title, isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
-    const [likedByUserPosts, setLikedByUserPosts] = useState([]);
 
     useEffect(() => {
         setIsLoadingFeed(true);
@@ -46,14 +49,22 @@ export default function TimelinePage({ title, isHidden }) {
                 setIsLoadingFeed(false);
             });
         }
-        else{
+        else {
             const promise = getTimeline(token);
 
             promise.then((response) => {
-                setTimeline([...response.data]);                
-                const postsUserLiked =[];
+                setTimeline([...response.data]);
+
+                const postsUserLiked = [];
                 response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
                 setLikedByUserPosts(postsUserLiked);
+
+                const likesAmount = response.data.map(post => post.likesAmount);
+                setActualLikesAmount(likesAmount);
+
+                const actualLikedByText = response.data.map(post => post.likedBy);
+                setActualLikedByText(actualLikedByText);
+
                 setIsLoadingFeed(false);
             });
 
@@ -104,29 +115,43 @@ export default function TimelinePage({ title, isHidden }) {
             setLikedByUserPosts([...likedByUserPosts, postId]);
             
             const postIndex = timeline.findIndex(post => post.id === postId);
-            const peopleWhoLikedArray = timeline[postIndex].likedBy.split(' ');
-            const likesAmount = timeline[postIndex].likesAmount + 1;
-            
-            let likedBy = '';
-            if (likesAmount >= 4)
-                likedBy = `Você, ${peopleWhoLikedArray[0].replace(/,/g, '')} e outras ${likesAmount - 2} pessoas`
-            
-            if (likesAmount === 3)
-                likedBy = `Você, ${peopleWhoLikedArray[0].replace(/,/g, '')} e ${peopleWhoLikedArray[1]}`
-            
-            if (likesAmount === 2)
-                likedBy = `Você e ${peopleWhoLikedArray[0].replace(/,/g, '')}`
+            const peopleWhoLikedArray = timeline[postIndex].likedBy.split(',');
+            console.log(peopleWhoLikedArray);
 
-            if (likesAmount === 1)
-                likedBy = `Você`
+            const newLikesAmount = timeline[postIndex].likesAmount + 1;
+            actualLikesAmount[postIndex] = newLikesAmount;
+
+            setActualLikesAmount([...actualLikesAmount]);
+
+            let likedBy = '';
+            if (newLikesAmount >= 4)
+                likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${newLikesAmount - 2} others`;
             
-            const postUpdated = {...timeline[postIndex], likesAmount, likedBy};
-            timeline[postIndex] = postUpdated;
+            if (newLikesAmount === 3)
+                likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${peopleWhoLikedArray[1]}`;
+            
+            if (newLikesAmount === 2)
+                likedBy = `You and ${peopleWhoLikedArray[0].replace(/,/g, '')}`;
+
+            if (newLikesAmount === 1)
+                likedBy = `You`;
+
+            actualLikedByText[postIndex] = likedBy;
+            setActualLikedByText([...actualLikedByText]);
         };
         
         if (type === 'unlike') {
             await unlikePost(postId, token);
             setLikedByUserPosts(likedByUserPosts.filter(id => id !== postId));
+
+            const postIndex = timeline.findIndex(post => post.id === postId);
+
+            const newLikesAmount = actualLikesAmount[postIndex] - 1;
+            actualLikesAmount[postIndex] = newLikesAmount;
+            setActualLikesAmount([...actualLikesAmount]);
+            
+            actualLikedByText[postIndex] = timeline[postIndex].likedBy;
+            setActualLikedByText([...actualLikedByText]);
         };
 
         return;
@@ -206,10 +231,10 @@ export default function TimelinePage({ title, isHidden }) {
                                             />
                                         }
 
-                                        <p>{`${post.likesAmount} likes`}</p>
+                                        <p>{`${actualLikesAmount[timeline.indexOf(post)]} ${actualLikesAmount[timeline.indexOf(post)] === 1 ? 'like' : 'likes'}`}</p>
 
                                         <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
-                                            {post.likedBy}
+                                            {actualLikedByText[timeline.indexOf(post)]}
 
                                             <div />
                                         </LikedBy>
