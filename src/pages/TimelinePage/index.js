@@ -61,7 +61,7 @@ export default function TimelinePage({ title, isHidden }) {
 
                 setIsLoadingFeed(false);
             });
-            
+
             promise.catch((error) => {
                 alert('An error occured while trying to fetch the posts, please refresh the page');
                 setIsLoadingFeed(false);
@@ -113,7 +113,7 @@ export default function TimelinePage({ title, isHidden }) {
         setUrlToPost('');
         setPostDescription('');
 
-        const promise = publishPost({"url": urlToPost, "description": postDescription}, token);
+        const promise = publishPost({ "url": urlToPost, "description": postDescription }, token);
 
         promise.then(response => {
             setTimesFeedUpdated(timesFeedUpdated + 1);
@@ -125,12 +125,12 @@ export default function TimelinePage({ title, isHidden }) {
             setIsPublishing(false);
         })
     }
-    
+
     async function handleLikePost(type, postId) {
         if (type === 'like') {
             await likePost(postId, token);
             setLikedByUserPosts([...likedByUserPosts, postId]);
-            
+
             const postIndex = timeline.findIndex(post => post.id === postId);
             const peopleWhoLikedArray = timeline[postIndex].likedBy.split(',');
 
@@ -142,10 +142,10 @@ export default function TimelinePage({ title, isHidden }) {
             let likedBy = '';
             if (newLikesAmount >= 4)
                 likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${newLikesAmount - 2} others`;
-            
+
             if (newLikesAmount === 3)
                 likedBy = `You, ${peopleWhoLikedArray[0].replace(/,/g, '')} and ${peopleWhoLikedArray[1]}`;
-            
+
             if (newLikesAmount === 2)
                 likedBy = `You and ${peopleWhoLikedArray[0].replace(/,/g, '')}`;
 
@@ -155,7 +155,7 @@ export default function TimelinePage({ title, isHidden }) {
             actualLikedByText[postIndex] = likedBy;
             setActualLikedByText([...actualLikedByText]);
         };
-        
+
         if (type === 'unlike') {
             await unlikePost(postId, token);
             setLikedByUserPosts(likedByUserPosts.filter(id => id !== postId));
@@ -235,7 +235,7 @@ export default function TimelinePage({ title, isHidden }) {
                             </PublishButton>
                         </form>
                     </ShareBox>
-                    <NewPosts isHashtagPage = {isHashtagPage}/>
+                    <NewPosts isHashtagPage={isHashtagPage} />
                     {isLoadingFeed ?
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
@@ -285,9 +285,9 @@ export default function TimelinePage({ title, isHidden }) {
                                                 <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                                     {actualLikedByText[timeline.indexOf(post)]}
 
-                                                        <div />
-                                                    </LikedBy>
-                                                </LeftPostContainer>
+                                                    <div />
+                                                </LikedBy>
+                                            </LeftPostContainer>
 
                                             <PostInfos post={post} />
 
@@ -298,8 +298,8 @@ export default function TimelinePage({ title, isHidden }) {
                                             post={post}
                                             commentsByPostId={commentsByPostId}
                                         />
-                                        </PostWrapper>
-                                    </>
+                                    </PostWrapper>
+                                </>
                             )}
                 </Feed>
                 <TrendingsHashtags trendingList={trendingList} />
