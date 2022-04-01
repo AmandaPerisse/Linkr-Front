@@ -21,9 +21,15 @@ function getUser(token) {
   return axios.get(`${BASE_URL}/users`, config);
 }
 
+
 async function getTimeline(token) {
   const config = createConfig(token);
   return await axios.get(`${BASE_URL}/feed`, config);
+}
+
+function getCommentsById(token, postId) {
+  const config = createConfig(token);
+  return axios.get(`${BASE_URL}/comments/${postId}`, config);
 }
 
 function updatePost(body, idPost) {
@@ -50,6 +56,10 @@ function unlikePost(id, token) {
   return axios.patch(`${BASE_URL}/unlike/${id}`, null, config);
 }
 
+function sendComment(body, token) {
+  const config = createConfig(token);
+  return axios.post(`${BASE_URL}/comments`, body, config);
+}
 async function getTrendingsHashtags(token) {
   const config = createConfig(token);
   return await axios.get(`${BASE_URL}/hashtag`, config);
@@ -77,4 +87,11 @@ async function getUserId(id) {
   return await axios.get(`${BASE_URL}/getuser/${id}`);
 }
 
-export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId };
+
+export {
+  signup, login, getTimeline,
+  publishPost, deletePost, likePost, unlikePost, updatePost,
+  getTrendingsHashtags, getTrending,
+  getUser, getUserPosts, searchUsers, getAllUsers, getUserId,
+  sendComment, getCommentsById
+};

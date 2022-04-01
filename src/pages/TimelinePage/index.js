@@ -6,12 +6,13 @@ import { AiOutlineComment } from 'react-icons/ai';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags, getCommentsById } from "../../services/api.js";
 import "../../styles/reset.css";
 import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, PostWrapper } from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 import CommentsInfos from "../../components/CommentsInfos/index.js";
+import axios from "axios";
 
 export default function TimelinePage({ title, isHidden }) {
     const { token } = useContext(UserContext);
@@ -32,6 +33,8 @@ export default function TimelinePage({ title, isHidden }) {
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
+    const [commentsByPostId, setCommentsByPostId] = useState([]);
+    const [commentsAmount, setCommentsAmount] = useState(0);
 
 
 
@@ -75,6 +78,7 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
+
     }, [token, timesFeedUpdated]);
 
     function handlePublishing(e) {
@@ -117,6 +121,7 @@ export default function TimelinePage({ title, isHidden }) {
 
     function handleIsShowingComments(postId) {
         if (isShowingComments == false) {
+            getComments(postId)
             setIsShowingComments(true)
             setShowingCommentsPostId(postId)
         }
@@ -126,7 +131,28 @@ export default function TimelinePage({ title, isHidden }) {
         }
     }
 
+    function getComments(postId) {
+        console.log("o post eh esse pow", postId)
+        const promise = getCommentsById(token, postId)
 
+        promise.then(response => {
+            console.log(response.data)
+            console.log("tamanhooo ", response.data.length)
+
+            setCommentsByPostId(response.data)
+        });
+        promise.catch(error => {
+            if (error.response.status === 404) {
+                setCommentsByPostId([])
+                alert("pegou mas nao tem comentarios nesse post ainda")
+            }
+            else {
+                alert("Não consequimos carregar os comentários")
+                console.log("erro#1-PlansPage: ", error.response.status)
+            }
+        }
+        );
+    }
     return (
         <Container isPublishing={isPublishing}>
             <Header />
@@ -205,7 +231,7 @@ export default function TimelinePage({ title, isHidden }) {
                                                 <p>{`${post.likesAmount} likes`}</p>
 
                                                 <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
-                                                <p>{` 23 Comments`}</p>
+                                                <p>{`${post.commentsAmount} comments`}</p>
 
                                                 <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
                                                     {post.likedBy}
@@ -221,6 +247,7 @@ export default function TimelinePage({ title, isHidden }) {
                                             isShowingComments={isShowingComments}
                                             showingCommentsPostId={showingCommentsPostId}
                                             post={post}
+                                            commentsByPostId={commentsByPostId}
                                         />
                                     </PostWrapper>
                                 </>
