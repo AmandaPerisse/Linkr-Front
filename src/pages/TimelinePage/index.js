@@ -38,9 +38,17 @@ export default function TimelinePage({ title, isHidden }) {
             
             promise.then((response) => {
                 setTimeline([...response.data]);
-                const postsUserLiked =[];
+
+                const postsUserLiked = [];
                 response.data.forEach(post => post.likedByUser && postsUserLiked.push(post.id));
                 setLikedByUserPosts(postsUserLiked);
+
+                const likesAmount = response.data.map(post => post.likesAmount);
+                setActualLikesAmount(likesAmount);
+
+                const actualLikedByText = response.data.map(post => post.likedBy);
+                setActualLikedByText(actualLikedByText);
+
                 setIsLoadingFeed(false);
             });
             
@@ -116,7 +124,6 @@ export default function TimelinePage({ title, isHidden }) {
             
             const postIndex = timeline.findIndex(post => post.id === postId);
             const peopleWhoLikedArray = timeline[postIndex].likedBy.split(',');
-            console.log(peopleWhoLikedArray);
 
             const newLikesAmount = timeline[postIndex].likesAmount + 1;
             actualLikesAmount[postIndex] = newLikesAmount;
@@ -149,7 +156,7 @@ export default function TimelinePage({ title, isHidden }) {
             const newLikesAmount = actualLikesAmount[postIndex] - 1;
             actualLikesAmount[postIndex] = newLikesAmount;
             setActualLikesAmount([...actualLikesAmount]);
-            
+
             actualLikedByText[postIndex] = timeline[postIndex].likedBy;
             setActualLikedByText([...actualLikedByText]);
         };
