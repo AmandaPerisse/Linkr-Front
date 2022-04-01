@@ -73,8 +73,27 @@ async function getAllUsers() {
   return await axios.get(`${BASE_URL}/allusers`);
 }
 
-async function getUserId(id) {
-  return await axios.get(`${BASE_URL}/getuser/${id}`);
+async function getUserId(id, token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/userid/${id}`, config);
 }
 
-export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId };
+async function checkIfFollows(userId, followerId) {
+  return await axios.get(`${BASE_URL}/checkiffollows/${userId}/${followerId}`);
+}
+
+async function follow(userId, followerId) {
+  return await axios.post(`${BASE_URL}/follow/${userId}/${followerId}`);
+}
+
+async function unfollow(userId, followerId) {
+  return await axios.delete(`${BASE_URL}/unfollow/${userId}/${followerId}`);
+}
+
+async function getUserName(name) {
+  return await axios.get(`${BASE_URL}/username/${name}`);
+}
+
+export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost,
+         updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, 
+         getAllUsers, getUserId, checkIfFollows, follow, unfollow, getUserName };
