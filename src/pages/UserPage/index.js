@@ -4,19 +4,20 @@ import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
 import Header from "../../components/Header/index.js";
-import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags } from "../../services/api.js";
+import { publishPost, getTimeline, likePost, unlikePost, getTrending, getTrendingsHashtags, getUserPosts, getUserId, checkIfFollows, follow, unfollow, getUserName } from "../../services/api.js";
 import "../../styles/reset.css";
-import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy } from "./styles"
+import { Container, Main, Feed, Title, ShareBox, SharedBoxQuestion, LinkInput, DescriptionInput, PublishButton, PostBox, LeftPostContainer, LikedBy, FollowButton, UnfollowButton} from "./styles"
 import PostInfos from "../../components/PostInfos/index.js";
 import TrendingsHashtags from "../../components/TrendingsHashtags/index.js";
 
-export default function TimelinePage({ title, isHidden }) {
-    const { token } = useContext(UserContext);
+export default function UserPage({ isHidden }) {
 
-    const { hashtag } = useParams();
-    if (!title) {
-        title = `# ${hashtag}`;
-    }
+    const {  userInfos, token } = useContext(UserContext);
+    const { userName } = userInfos;
+
+    const { id } = useParams();
+
+    const hashtag = "";
 
     const [timeline, setTimeline] = useState([]);
     const [urlToPost, setUrlToPost] = useState("")
@@ -26,10 +27,15 @@ export default function TimelinePage({ title, isHidden }) {
     const [trendingList, setTrendingList] = useState([]);
     const [isPublishing, setIsPublishing] = useState(false);
     const [isLoadingFeed, setIsLoadingFeed] = useState(false);
+    const [isLoadingFollow, setIsLoadingFollow] = useState(false);
+    const [doesFollow, setDoesFollow] = useState(false);
+    const [idUser, setIdUser] = useState([]);
+    const [userId, setUserId] = useState([]);
+    const [followerId, setFollowerId] = useState([]);
 
     useEffect(() => {
         setIsLoadingFeed(true);
-        const promise = getTimeline(token);
+        const promise = getUserPosts(id, token);
 
         promise.then((response) => {
             setIsLoadingFeed(false);
@@ -40,7 +46,52 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the posts, please refresh the page');
             setIsLoadingFeed(false);
         });
-    }, [token, timesFeedUpdated]);
+    }, [id, token, timesFeedUpdated]);
+
+    useEffect(() => {
+        setIsLoadingFeed(true);
+        const promise = getUserId(id, token);
+
+        promise.then((response) => {
+            setIsLoadingFeed(false);
+            setIdUser([...response.data]);
+            setFollowerId(response.data[0].id);
+            
+        });
+
+        promise.catch((error) => {
+            alert('An error occured while trying to fetch the posts, please refresh the page');
+            setIsLoadingFeed(false);
+        });
+    }, [id, token, timesFeedUpdated]);
+
+    useEffect(() => {
+
+        const promise = getUserName(userName);
+
+        promise.then((response) => {
+            setUserId(response.data[0].id);
+        });
+
+        promise.catch((error) => {
+            console.log(error);
+        });
+    }, [userName]);
+
+    useEffect(() => {
+
+        const promise = checkIfFollows(userId, followerId);
+
+        promise.then((response) => {
+            console.log(response.data);
+            setDoesFollow(response.data);
+        });
+
+        promise.catch((error) => {
+            console.log(error);
+        });
+    }, [userId, followerId]);
+
 
     useEffect(() => {
         try {
@@ -66,6 +117,19 @@ export default function TimelinePage({ title, isHidden }) {
         }
         
     }, [hashtag, token]);
+
+    function followUser()
+    {
+        follow(userId, followerId);
+        setDoesFollow(true);
+
+    }
+
+    function unfollowUser()
+    {
+        unfollow(userId, followerId);
+        setDoesFollow(false);
+    }
 
     function handlePublishing(e) {
         e.preventDefault();
@@ -110,35 +174,27 @@ export default function TimelinePage({ title, isHidden }) {
             <Header />
             <Main>
                 <Feed>
-                    <Title to={"/timeline"}> timeline </Title>
-
-                    <ShareBox>
-                        <form onSubmit={handlePublishing}>
-
-                            <SharedBoxQuestion>
-                                What are you going to share today?
-                            </SharedBoxQuestion>
-
-                            <LinkInput
-                                placeholder="http:/..."
-                                type="url"
-                                onChange={(e) => setUrlToPost(e.target.value)}
-                                value={urlToPost}
-                                required
-                            />
-
-                            <DescriptionInput
-                                placeholder="Awesome article about #javascript"
-                                onChange={(e) => setPostDescription(e.target.value)}
-                                value={postDescription}
-                            />
-
-                            <PublishButton isPublishing={isPublishing}>
-                                {isPublishing ? 'Publishing...' : 'Publish'}
-                            </PublishButton>
-                        </form>
-                    </ShareBox>
-
+                   
+                    <Title> {idUser[0]?.name} </Title>
+                    {userId === followerId ?
+                    <></>
+                    :
+                    <div>
+                    {isLoadingFollow ?
+                        <>
+                        </>
+                        :
+                        <div>  
+                            {doesFollow ?
+                                <></>
+                                :
+                                <FollowButton onClick={() => followUser()}>Follow</FollowButton>       
+                            }  
+                            <UnfollowButton onClick={() => unfollowUser()}>Unfollow</UnfollowButton>                                                                            
+                        </div>         
+                    }
+                    </div>
+                    }
                     {isLoadingFeed ?
                         <>
                             <Grid height="50" width="50" color='grey' ariaLabel='loading' />
@@ -146,7 +202,7 @@ export default function TimelinePage({ title, isHidden }) {
                         </>
                         :
                         timeline.length === 0 ?
-                            <h3>There are no posts yet</h3>
+                            <h3>There are no posts from this user yet</h3>
                             :
                             timeline.map(post =>
                                 <PostBox>

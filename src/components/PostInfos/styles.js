@@ -72,13 +72,14 @@ const IconsWrapper = styled.div`
 `;
 
 const LinkPreview = styled.div`
-    width: 100%;
+    width: 100% !important;
     height: auto;
     border: 1px solid #4D4D4D;
     border-radius: 11px;
     overflow: hidden;
     display: flex;
     align-items: stretch;
+    justify-content: space-between;
     cursor: pointer;
 `;
 
@@ -133,14 +134,18 @@ const LinkData = styled.div`
 `;
 
 const LinkImage = styled.div`
+    max-height: 125px;
     width: 32%;
     overflow: hidden;
     background-color: #FFFFFF;
     display: flex;
+    align-items: center;
+    justify-content: center;
 
     img {
+        height: 100%;
         width: 100%;
-        object-fit: cover;
+        object-fit: contain;
     }
 `;
 const ConfirmBox = styled.div`

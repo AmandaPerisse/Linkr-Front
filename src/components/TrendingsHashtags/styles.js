@@ -3,14 +3,19 @@ import styled from "styled-components";
 const TrendingSubTitle = styled.div`
     background-color: #171717; 
     width: 300px;
-    margin-top: 66px;
+    margin-top: 65px;
     border-radius: 16px 16px 0px 0px;
     padding: 0px 15px;
     height: 55px;
     display: flex;
     align-items: center;
+
      @media(max-width: 900px) {
          display: none;
+    }
+
+    @media(max-width: 1280px) {
+        margin-top: 85px;
     }
 `;
 

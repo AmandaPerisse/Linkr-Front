@@ -42,7 +42,6 @@ function SearchBar() {
 
     });
 
-
     return (
         <div>
             <InputWraper>
@@ -64,7 +63,7 @@ function SearchBar() {
             <CustomUl>
                 {filteredUsers.map(value =>
                     <SearchNode onClick={() => navigate(`/user/${value.id}`)} key={value.name}>
-                        <UserPfp src={`${value.img}`} />
+                        <UserPfp src={value.img} />
                         <CustomSpan>
                             {value.name}
                         </CustomSpan>

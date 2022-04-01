@@ -5,11 +5,12 @@ import {
     CommentsWrapper, CommentBox, CommentImg, CommentUserInfos,
     CommentBody, KinshipBox, Dot, KinshipInfo, Username, HorizontalBar, InputWrapper, UserImg, Input
 } from './styles';
-import { getUser } from '../../services/api';
+import { getUser, sendComment } from '../../services/api';
 import UserContext from '../../Providers/UserContext';
 import axios from 'axios';
+import { DescriptionInput } from '../../pages/TimelinePage/styles';
 
-function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
+function CommentsInfos({ isShowingComments, showingCommentsPostId, post, commentsByPostId }) {
     const [commentValue, setCommentValue] = useState("");
     const { token } = useContext(UserContext);
     const [userInfos, setUserInfos] = useState([]);
@@ -25,6 +26,8 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
         if (isShowingComments === false) {
             setCommentValue("")
         }
+
+
     }, [])
 
 
@@ -35,17 +38,12 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
     }
 
     function handleSendComment(postId) {
-        const promise = axios.post('http://localhost:5000/comments',
-            {
-                postId: postId,
-                comment: commentValue,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            }
-        );
+        console.log(commentValue)
+        console.log(postId)
+        const promise = sendComment({
+            postId: postId,
+            comment: commentValue,
+        }, token)
 
         promise.then((response) => {
             alert("comentário feito. Futuramente você poderá vê-lo")
@@ -56,6 +54,14 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
         });
 
     }
+    function handleKinshipInfo(authorId) {
+        if (userInfos.id === authorId)
+            return "post's author"
+        else {
+            return "restezin"
+        }
+    }
+
     return (
         <CommentsWrapper>
             <AnimatePresence>
@@ -69,22 +75,39 @@ function CommentsInfos({ isShowingComments, showingCommentsPostId, post }) {
                             duration: 1
                         }}>
 
-                        <CommentBox>
-                            <span>
-                                <CommentImg src="https://i.imgur.com/wv7BslU.png" alt="img user" />
-                                <div>
-                                    <CommentUserInfos>
-                                        <Username>UsernameFake</Username>
-                                        <KinshipBox>
-                                            <Dot />
-                                            <KinshipInfo> following </KinshipInfo>
-                                        </KinshipBox>
-                                    </CommentUserInfos>
-                                    <CommentBody> Comentário fake! EM breve funcionando!</CommentBody>
-                                </div>
-                            </span>
-                        </CommentBox>
-                        <HorizontalBar />
+
+                        {commentsByPostId !== [] ? (
+
+                            <>
+                                {commentsByPostId.map((info) => (
+                                    <>
+                                        <CommentBox>
+                                            <span>
+                                                <CommentImg src={info.authorImg} alt="user img" />
+                                                <div>
+                                                    <CommentUserInfos>
+                                                        <Username>{info.authorName}</Username>
+                                                        <KinshipBox>
+                                                            <Dot />
+                                                            <KinshipInfo> {handleKinshipInfo(info.userId)} </KinshipInfo>
+                                                        </KinshipBox>
+                                                    </CommentUserInfos>
+                                                    <CommentBody> {info.comment}</CommentBody>
+                                                </div>
+                                            </span>
+                                        </CommentBox>
+                                        <HorizontalBar />
+                                    </>
+                                ))}
+
+                            </>
+
+                        ) : ("")}
+
+
+
+
+
 
                         <InputWrapper>
                             <UserImg src="https://i.imgur.com/rEof5QC.png" alt="img user" />

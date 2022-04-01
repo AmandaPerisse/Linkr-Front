@@ -1,8 +1,8 @@
 import axios from "axios";
 
 //const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-// const BASE_URL = "https://top-linkr.herokuapp.com";
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://top-linkr.herokuapp.com";
+//const BASE_URL = "http://localhost:5000";
 
 function createConfig(token) {
   return { headers: { Authorization: `Bearer ${token}` } };
@@ -24,6 +24,11 @@ function getUser(token) {
 async function getTimeline(token) {
   const config = createConfig(token);
   return await axios.get(`${BASE_URL}/feed`, config);
+}
+
+function getCommentsById(token, postId) {
+  const config = createConfig(token);
+  return axios.get(`${BASE_URL}/comments/${postId}`, config);
 }
 
 function updatePost(body, idPost) {
@@ -50,6 +55,10 @@ function unlikePost(id, token) {
   return axios.patch(`${BASE_URL}/unlike/${id}`, null, config);
 }
 
+function sendComment(body, token) {
+  const config = createConfig(token);
+  return axios.post(`${BASE_URL}/comments`, body, config);
+}
 async function getTrendingsHashtags(token) {
   const config = createConfig(token);
   return await axios.get(`${BASE_URL}/hashtag`, config);
@@ -73,8 +82,9 @@ async function getAllUsers() {
   return await axios.get(`${BASE_URL}/allusers`);
 }
 
-async function getUserId(id) {
-  return await axios.get(`${BASE_URL}/getuser/${id}`);
+async function getUserId(id, token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/userid/${id}`, config);
 }
 
 async function getPostsAmount(token) {
@@ -82,4 +92,29 @@ async function getPostsAmount(token) {
   return await axios.get(`${BASE_URL}/postamount`, config);
 }
 
-export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId, getPostsAmount };
+async function checkIfFollows(userId, followerId) {
+  return await axios.get(`${BASE_URL}/checkiffollows/${userId}/${followerId}`);
+}
+
+async function follow(userId, followerId) {
+  return await axios.post(`${BASE_URL}/follow/${userId}/${followerId}`);
+}
+
+async function unfollow(userId, followerId) {
+  return await axios.delete(`${BASE_URL}/unfollow/${userId}/${followerId}`);
+}
+
+async function getUserName(name) {
+  return await axios.get(`${BASE_URL}/username/${name}`);
+}
+
+
+export {
+  signup, login, getTimeline,
+  publishPost, deletePost, likePost, unlikePost, updatePost,
+  getTrendingsHashtags, getTrending,
+  getUser, getUserPosts, searchUsers, getAllUsers, getUserId,
+  sendComment, getCommentsById,
+  checkIfFollows, follow, unfollow, getUserName, getPostsAmount
+};
+

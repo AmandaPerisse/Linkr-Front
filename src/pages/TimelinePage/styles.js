@@ -31,19 +31,17 @@ const Main = styled.div`
     justify-content: space-between; 
     margin: 72px 0;
     gap: 20px;
-     @media(max-width: 700px) {
+
+    @media(max-width: 700px) {
         width: fit-content;
     }
 `;
-
-
-
-
 
 const Feed = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 15px;
 
     h3 {
         font-family: Lato;
@@ -52,8 +50,9 @@ const Feed = styled.div`
         font-weight: 700;
     }
 
-    width: 615px; //Hashtag update
-     @media(max-width: 700px) {
+    width: 615px;
+
+    @media(max-width: 700px) {
         width: fit-content;
     }
 `;
@@ -70,20 +69,20 @@ const Title = styled.h1`
         margin-bottom: 18px;
     }
     @media(max-width: 700px) {
-       padding-left: 18px ;
+       padding-left: 18px;
     }
 `;
 
 const ShareBox = styled.div`
-
     border-radius: 16px;
     width: 100%;
     height: 164px;
+    margin-bottom: 15px;
     background-color: #FFF;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     padding: 10px 15px;
     display: ${props => props.isHidden};
-    margin-top:30px ;
+
     form {
         width: 100%;
         height: 100%;
@@ -93,7 +92,7 @@ const ShareBox = styled.div`
         gap: 5px;
     }
 
-     @media(max-width: 700px) {
+    @media(max-width: 700px) {
         width: 100vw;
         border-radius: 0px;
     }
@@ -132,7 +131,7 @@ const LinkInput = styled.input`
         color: #949494;
     }
 
-    :focus{
+    :focus {
         outline: 2px solid #1877F2;
     }
 `;
@@ -157,7 +156,7 @@ const DescriptionInput = styled.textarea`
         color: #949494;
     }
 
-    :focus{
+    :focus {
         outline: 2px solid #1877F2;
     }
 `;
@@ -190,29 +189,32 @@ const PublishButton = styled.button`
         `)
     };
 `;
+
 const PostWrapper = styled.div`
     background-color: #1E1E1E;
     margin-top: 30px ;
     border-radius: 16px;
 
-     @media(max-width: 700px){
+    @media(max-width: 700px){
         border-radius: 1px ;
         width: 100vw;
         max-width:fit-content ;
-         margin: 16px 0;
-
+        margin: 16px 0;
     }
-     @media(max-width: 1280px) {
+
+    @media(max-width: 1280px) {
         margin: 30px 0;
     }
-`
+`;
+
 const PostBox = styled.div`
     border-radius: 16px;
-    width: 100%;
+    min-width: 100%;
     height: auto;
     max-height: 340px;
     background-color: #171717;
     padding: 15px;
+
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -222,10 +224,9 @@ const PostBox = styled.div`
     background-color: #171717;
 
    
-     @media(max-width: 700px) {
+    @media(max-width: 700px) {
         width: 100vw;
         border-radius: 0px;
-
     }
 `;
 
@@ -261,9 +262,13 @@ const LeftPostContainer = styled.div`
         height: 18px;
         color: #FFFFFF;
         margin-top:15px ;
+        
+        :hover{
+            color: #1877F2 !important;
+            filter: brightness(95%);
+        }
     }
 `;
-
 
 const LikedBy = styled.div`
     position: absolute;
