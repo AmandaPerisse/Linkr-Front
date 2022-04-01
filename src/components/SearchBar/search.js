@@ -26,21 +26,21 @@ function SearchBar() {
         }
     }
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     try {
-    //         const promise = getAllUsers();
+        try {
+            const promise = getAllUsers();
 
-    //         promise.then((response) => {
-    //             setUsers(response.data);
-    //         });
+            promise.then((response) => {
+                setUsers(response.data);
+            });
 
-    //     }
-    //     catch (error) {
-    //         alert('Busca por usuarios falhou');
-    //     }
+        }
+        catch (error) {
+            alert('Busca por usuarios falhou');
+        }
 
-    // });
+    });
 
     return (
         <div>
