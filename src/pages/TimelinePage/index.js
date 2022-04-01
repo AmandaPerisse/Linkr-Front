@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { FaRegHeart, FaHeart } from 'react-icons/fa';
 import { AiOutlineComment } from 'react-icons/ai';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { Grid } from 'react-loader-spinner'
 import UserContext from '../../Providers/UserContext.js';
@@ -35,7 +34,6 @@ export default function TimelinePage({ title, isHidden }) {
 
     const [isShowingComments, setIsShowingComments] = useState(false);
     const [showingCommentsPostId, setShowingCommentsPostId] = useState(null);
-
 
 
     useEffect(() => {
@@ -171,66 +169,64 @@ export default function TimelinePage({ title, isHidden }) {
                             <h3>Loading...</h3>
                         </>
                         :
-                        timeline.length === 0 ?
-                            <h3>There are no posts yet</h3>
-                            :
-                            <InfiniteScroll dataLength={timeline.length}>
-                            {timeline.map(post =>
-                                <>
-                                    <PostWrapper>
-                                        <PostBox>
-                                            <LeftPostContainer>
-                                                <img src={post.user.pictureUrl} alt={post.user.name} />
-                                                {post.likedByUser ?
-                                                    <FaHeart
-                                                        onClick={() => handleLikePost('unlike', post.id)}
-                                                        size={17}
-                                                        color={"#AC0000"}
-                                                        onMouseEnter={() => {
-                                                            setHoveredPost(timeline.indexOf(post));
-                                                        }}
-                                                        onMouseLeave={() => {
-                                                            setHoveredPost(null)
-                                                        }}
-                                                    />
-                                                    :
-                                                    <FaRegHeart
-                                                        onClick={() => handleLikePost('like', post.id)}
-                                                        size={17}
-                                                        color={"#FFFFFF"}
-                                                        onMouseEnter={e => {
-                                                            setHoveredPost(timeline.indexOf(post));
-                                                        }}
-                                                        onMouseLeave={e => {
-                                                            setHoveredPost(null)
-                                                        }}
-                                                    />
-                                                }
+                            timeline.length === 0 ?
+                                <h3>There are no posts yet</h3>
+                                :
+                                timeline.map(post =>
+                                    <>
+                                        <PostWrapper>
+                                            <PostBox>
+                                                <LeftPostContainer>
+                                                    <img src={post.user.pictureUrl} alt={post.user.name} />
+                                                    {post.likedByUser ?
+                                                        <FaHeart
+                                                            onClick={() => handleLikePost('unlike', post.id)}
+                                                            size={17}
+                                                            color={"#AC0000"}
+                                                            onMouseEnter={() => {
+                                                                setHoveredPost(timeline.indexOf(post));
+                                                            }}
+                                                            onMouseLeave={() => {
+                                                                setHoveredPost(null)
+                                                            }}
+                                                        />
+                                                        :
+                                                        <FaRegHeart
+                                                            onClick={() => handleLikePost('like', post.id)}
+                                                            size={17}
+                                                            color={"#FFFFFF"}
+                                                            onMouseEnter={e => {
+                                                                setHoveredPost(timeline.indexOf(post));
+                                                            }}
+                                                            onMouseLeave={e => {
+                                                                setHoveredPost(null)
+                                                            }}
+                                                        />
+                                                    }
 
-                                                <p>{`${post.likesAmount} likes`}</p>
+                                                    <p>{`${post.likesAmount} likes`}</p>
 
-                                                <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
-                                                <p>{` 23 Comments`}</p>
+                                                    <AiOutlineComment onClick={() => handleIsShowingComments(post.id)} />
+                                                    <p>{` 23 Comments`}</p>
 
-                                                <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
-                                                    {post.likedBy}
+                                                    <LikedBy style={hoveredPost === timeline.indexOf(post) && post.likedBy !== '' ? { display: 'block' } : { display: 'none' }} >
+                                                        {post.likedBy}
 
-                                                    <div />
-                                                </LikedBy>
-                                            </LeftPostContainer>
+                                                        <div />
+                                                    </LikedBy>
+                                                </LeftPostContainer>
 
-                                            <PostInfos post={post} />
+                                                <PostInfos post={post} />
 
-                                        </PostBox>
-                                        <CommentsInfos
-                                            isShowingComments={isShowingComments}
-                                            showingCommentsPostId={showingCommentsPostId}
-                                            post={post}
-                                        />
-                                    </PostWrapper>
-                                </>
-                            )}
-                            </InfiniteScroll>}
+                                            </PostBox>
+                                            <CommentsInfos
+                                                isShowingComments={isShowingComments}
+                                                showingCommentsPostId={showingCommentsPostId}
+                                                post={post}
+                                            />
+                                        </PostWrapper>
+                                    </>
+                                )}
                 </Feed>
                 <TrendingsHashtags trendingList={trendingList} />
             </Main>

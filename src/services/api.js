@@ -77,8 +77,9 @@ async function getUserId(id) {
   return await axios.get(`${BASE_URL}/getuser/${id}`);
 }
 
-async function getPostsAmount(id) {
-  return await axios.get(`${BASE_URL}/postamount`);
+async function getPostsAmount(token) {
+  const config = createConfig(token);
+  return await axios.get(`${BASE_URL}/postamount`, config);
 }
 
 export { signup, login, getTimeline, publishPost, deletePost, likePost, unlikePost, updatePost, getTrendingsHashtags, getTrending, getUser, getUserPosts, searchUsers, getAllUsers, getUserId, getPostsAmount };
