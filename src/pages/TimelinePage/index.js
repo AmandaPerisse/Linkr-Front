@@ -48,8 +48,7 @@ export default function TimelinePage({ title, isHidden }) {
         }
         else{
             const promise = getTimeline(token);
-            console.log('sem hashtag');
-            
+
             promise.then((response) => {
                 setTimeline([...response.data]);                
                 const postsUserLiked =[];
@@ -76,8 +75,8 @@ export default function TimelinePage({ title, isHidden }) {
             alert('An error occured while trying to fetch the trending hashtags, please refresh the page');
             setIsLoadingFeed(false);
         });
-        
-    }, [token, timesFeedUpdated]);
+
+    }, [token, hashtag, timesFeedUpdated]);
 
     function handlePublishing(e) {
         e.preventDefault();
@@ -94,15 +93,35 @@ export default function TimelinePage({ title, isHidden }) {
 
         promise.catch(error => {
             alert("Houve um erro ao publicar seu link");
-            console.log(error.response.status)
+            console.log(error.response.status);
             setIsPublishing(false);
         })
     }
-
+    
     async function handleLikePost(type, postId) {
         if (type === 'like') {
             await likePost(postId, token);
-            setLikedByUserPosts(...likedByUserPosts.push(postId));
+            setLikedByUserPosts([...likedByUserPosts, postId]);
+            
+            const postIndex = timeline.findIndex(post => post.id === postId);
+            const peopleWhoLikedArray = timeline[postIndex].likedBy.split(' ');
+            const likesAmount = timeline[postIndex].likesAmount + 1;
+            
+            let likedBy = '';
+            if (likesAmount >= 4)
+                likedBy = `Você, ${peopleWhoLikedArray[0].replace(/,/g, '')} e outras ${likesAmount - 2} pessoas`
+            
+            if (likesAmount === 3)
+                likedBy = `Você, ${peopleWhoLikedArray[0].replace(/,/g, '')} e ${peopleWhoLikedArray[1]}`
+            
+            if (likesAmount === 2)
+                likedBy = `Você e ${peopleWhoLikedArray[0].replace(/,/g, '')}`
+
+            if (likesAmount === 1)
+                likedBy = `Você`
+            
+            const postUpdated = {...timeline[postIndex], likesAmount, likedBy};
+            timeline[postIndex] = postUpdated;
         };
         
         if (type === 'unlike') {
